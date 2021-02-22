@@ -29,3 +29,40 @@ formulario en línea
 - Validando la entrada del usuario
 - Envío de información de usuario por correo electrónico
 
+## Cómo PHP recopila información de un formulario
+
+Aunque HTML contiene todas las etiquetas necesarias para construir un 
+formulario, no proporciona ningún medio para procesar el formulario 
+una ves este se envía. Para eso, se necesita una solución del lado del 
+servidor, como PHP.
+
+El sitio web de Japan Journey contiene un formulario de comentarios 
+simple (ver Figura 6-1). Otros elementos, como botones de opción, 
+casillas de verificación y menús desplegables, se agregarán más adelante.
+
+First, let’s take a look at the HTML code for the form (it’s in 
+`contact_01.php` in the ch06 folder): 
+
+
+```html
+
+<form method="post" action="">
+    <p>
+        <label for="name">Name:</label>
+        <input name="name" id="name" type="text">
+    </p>
+    <p>
+        <label for="email">Email:</label>
+        <input name="email" id="email" type="text">
+    </p>
+    <p>
+        <label for="comments">Comments:</label>
+        <textarea name="comments" id="comments"></textarea>
+    </p>
+    <p>
+        <input name="send" type="submit" value="Send message">
+    </p>
+</form>
+
+```
+&____________________________________________________________________
