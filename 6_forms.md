@@ -73,5 +73,19 @@ Los scripts de procesamiento de formularios, sin embargo, se basan en
 el atributo de _name_. Por lo tanto, aunque el atributo _id_ es opcional 
 en el botón _submit_, debe usar el atributo _name_ para cada elemento 
 del formulario que desee procesar.
-    
+
+El atributo _name_ de un elemento de entrada de formulario normalmente no 
+debe contener espacios. Si desea combinar varias palabras, únalas con un 
+guión bajo (PHP lo hará automáticamente si deja espacios). Debido a que el 
+script desarrollado más adelante en este capítulo convierte los atributos 
+_name_ en variables PHP, no use guiones ni ningún otro carácter que no sea 
+válido en los nombres de las variables PHP.
+
+Otras dos cosas a tener en cuenta son los atributos de _method_ y _action_
+dentro de la etiqueta de apertura _<form>_. El atributo de _method_ determina 
+cómo el formulario envía datos. Se puede configurar para _post_ y _get_. El 
+atributo _action_ le dice al navegador dónde enviar los datos para su 
+procesamiento cuando se hace clic en el botón _submit_. Si el valor se deja 
+vacío, como aquí, la página intenta procesar el formulario en sí. Sin embargo, 
+un atributo _action_ vacío no es válido en HTML5, por lo que será necesario corregirlo.
 &____________________________________________________________________
