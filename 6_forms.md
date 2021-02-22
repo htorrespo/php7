@@ -40,8 +40,8 @@ El sitio web de Japan Journey contiene un formulario de comentarios
 simple (ver Figura 6-1). Otros elementos, como botones de opción, 
 casillas de verificación y menús desplegables, se agregarán más adelante.
 
-First, let’s take a look at the HTML code for the form (it’s in 
-`contact_01.php` in the ch06 folder): 
+Primero, echemos un vistazo al código HTML del formulario (está en 
+`contact_01.php` en la carpeta ch06):
 
 
 ```html
@@ -63,6 +63,15 @@ First, let’s take a look at the HTML code for the form (it’s in
         <input name="send" type="submit" value="Send message">
     </p>
 </form>
-
 ```
+
+Las dos primeras etiquetas <input> y la etiqueta <textarea> contienen 
+atributos de nombre e identificación configurados con el mismo valor. 
+La razón de esta duplicación es la accesibilidad. HTML usa el atributo 
+id para asociar el elemento <label> con el elemento <input> correcto. 
+Los scripts de procesamiento de formularios, sin embargo, se basan en 
+el atributo de nombre. Por lo tanto, aunque el atributo id es opcional 
+en el botón Enviar, debe usar el atributo de nombre para cada elemento 
+del formulario que desee procesar.
+    
 &____________________________________________________________________
