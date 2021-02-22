@@ -65,13 +65,13 @@ Primero, echemos un vistazo al código HTML del formulario (está en
 </form>
 ```
 
-Las dos primeras etiquetas <input> y la etiqueta <textarea> contienen 
+Las dos primeras etiquetas _<input>_ y la etiqueta _<textarea>_ contienen 
 atributos de nombre e identificación configurados con el mismo valor. 
 La razón de esta duplicación es la accesibilidad. HTML usa el atributo 
-id para asociar el elemento <label> con el elemento <input> correcto. 
+_id_ para asociar el elemento _<label>_ con el elemento _<input>_ correcto. 
 Los scripts de procesamiento de formularios, sin embargo, se basan en 
-el atributo de nombre. Por lo tanto, aunque el atributo id es opcional 
-en el botón Enviar, debe usar el atributo de nombre para cada elemento 
+el atributo de _name_. Por lo tanto, aunque el atributo _id_ es opcional 
+en el botón _submit_, debe usar el atributo _name_ para cada elemento 
 del formulario que desee procesar.
     
 &____________________________________________________________________
