@@ -805,4 +805,198 @@ Pasar el contenido del elemento array `$_POST` a `htmlentities()`, sin
 embargo, convierte las comillas dobles en el medio de la cadena a `&quot;`. 
 Y, como muestra la Figura 6-7, el contenido ya no está truncado.
 
+
+Lo bueno de esto es que la entidad de carácter `&quot;` se convierte 
+de nuevo a comillas dobles cuando se vuelve a enviar el formulario. 
+Como resultado, no es necesario realizar más conversiones antes de que 
+se pueda enviar el correo electrónico.
+
+Nota
+
+Si `htmlentities()` corrompe su texto, puede establecer la codificación 
+directamente dentro de un script pasando el segundo y tercer argumento 
+opcional a la función. Por ejemplo, para establecer la codificación en 
+chino simplificado, use `htmlentities($name, ENT_COMPAT, 'GB2312')`. 
+Para obtener más información, consulte la documentación en www.php.net/manual/en/function.htmlentities.php.
+
+2. Edite el campo de correo electrónico de la misma manera, usando 
+`$email` en lugar de `$name`.
+     
+3. El área de texto de comentarios debe manejarse de manera ligeramente 
+diferente porque las etiquetas `<textarea>` no tienen un atributo 
+`value`. Debe colocar el bloque PHP entre las etiquetas de apertura y
+ cierre del área de texto, así:
+
+```html
+<textarea name="comments" id="comments"><?php
+  if ($missing || $errors) {
+      echo htmlentities($comments);
+  } ?></textarea>
+```
+
+Es importante colocar las etiquetas PHP de apertura y cierre contra 
+las etiquetas `<textarea>`. Si no lo hace, obtendrá espacios en blanco 
+no deseados dentro del área de texto.
+ 
+4. Guarde `contact.php` y pruebe la página en un navegador. Si se 
+omite algún campo obligatorio, el formulario muestra el contenido 
+original junto con los mensajes de error.
+
+Puede verificar su código con `contact_04.php` en la carpeta ch06.
+
+
+Precaución
+
+El uso de esta técnica evita que el botón de restablecimiento de un 
+formulario restablezca cualquier campo que haya sido modificado por 
+el script PHP porque establece explícitamente el atributo de valor de 
+cada campo.
+
+
+## Filtrar posibles ataques
+
+Un exploit particularmente desagradable conocido como inyección de 
+encabezado de correo electrónico busca convertir formularios en línea 
+en transmisores de spam. El atacante intenta engañar a su script para 
+que envíe un correo electrónico HTML con copias a muchas personas. Esto 
+es posible si incorpora la entrada del usuario sin filtrar en los 
+encabezados adicionales que se pueden pasar como el cuarto argumento a 
+la función `mail()`. Es común agregar la dirección de correo electrónico 
+del usuario como un encabezado de respuesta. Si detecta espacios, nuevas 
+líneas, retornos de carro o cualquiera de las cadenas "Content-type:", 
+"Cc:" o "Bcc:" en el valor enviado, es el objetivo de un ataque, por lo 
+que debe bloquear el mensaje.
+
+Solución PHP 6-4: bloqueo de direcciones de correo electrónico que 
+contienen contenido sospechoso
+
+Esta solución PHP verifica la entrada de la dirección de correo 
+electrónico del usuario en busca de contenido sospechoso. Si se detecta, 
+una variable booleana se establece en verdadera. Esto se utilizará más 
+adelante para evitar que se envíe el correo electrónico.
+
+Continúe trabajando con la misma página que antes. Alternativamente, 
+use `contact_04.php` e `includes/processmail_01.php` de la carpeta ch06.
+
+1. Para detectar las frases sospechosas, usaremos un patrón de búsqueda 
+o una expresión regular. Agregue el siguiente código en la parte superior 
+de `processmail.php` antes del bucle `foreach` existente:
+
+```html
+// pattern to locate suspect phrases
+$pattern = '/[\s\r\n]|Content-Type:|Bcc:|Cc:/i';
+foreach ($_POST as $key => $value) {
+```
+
+La cadena asignada a `$pattern` se utilizará para realizar una búsqueda 
+que no distinga entre mayúsculas y minúsculas para cualquiera de los 
+siguientes: un espacio, retorno de carro, salto de línea, "Content-Type:", 
+"Bcc:" o "Cc:". Está escrito en un formato llamado expresión regular 
+compatible con Perl (PCRE). El patrón de búsqueda está encerrado en un 
+par de barras diagonales, y la i después de la barra final hace que el 
+patrón no distinga entre mayúsculas y minúsculas.
+
+Consejo
+
+Las expresiones regulares son una herramienta extremadamente poderosa 
+para hacer coincidir patrones de texto. Es cierto que no son fáciles 
+de aprender; pero es una habilidad esencial si se toma en serio el 
+trabajo con lenguajes de programación como PHP y JavaScript. Eche un 
+vistazo a Introducción a las expresiones regulares de Jörg Krause 
+(Apress, 2017, ISBN 978-1-4842-2508-0). Está dirigido principalmente 
+a desarrolladores de JavaScript, pero solo existen pequeñas diferencias 
+de implementación entre JavaScript y PHP. La sintaxis básica es idéntica.
+
+2. Ahora puede usar el PCRE almacenado en `$pattern` para detectar 
+cualquier entrada de usuario sospechosa en la dirección de correo 
+electrónico enviada. Agregue el siguiente código inmediatamente después 
+de la variable `$pattern` del paso 1:
+
+```html
+// check the submitted email address
+$suspect = preg_match($pattern,  $_POST['email']);
+```
+
+La función `preg_match()` compara la expresión regular pasada como 
+primer argumento con el valor del segundo argumento, en este caso, 
+el valor del campo de correo electrónico. Devuelve verdadero si 
+encuentra una coincidencia. Por lo tanto, si se encuentra contenido 
+sospechoso, `$suspect` será cierto. Pero si no hay coincidencia, 
+será falso.
+
+3. Si se detecta contenido sospechoso en la dirección de correo 
+electrónico, no tiene sentido seguir procesando el array `$_POST`. 
+Envuelva el código que procesa las variables `$_POST` en una 
+declaración condicional como esta:
+
+```html
+if (!$suspect) {
+    foreach ($_POST as $key => $value) {
+        // strip whitespace from $value if not an array
+        if (!is_array($value)) {
+           $value = trim($value);
+        }
+        if (!in_array($key, $expected)) {
+            // ignore the value, it's not in $expected
+            continue;
+        }
+        if (in_array($key, $required) && empty($value)) {
+            // required value is missing
+            $missing[] = $key;
+            $$key = "";
+            continue;
+        }
+    $$key = $value;
+    }
+}
+```
+
+Esto procesa las variables en el array `$_POST` solo si `$suspect`no 
+es verdadero.
+
+No olvide la llave extra para cerrar la declaración condicional.
+
+4. Edite el bloque PHP después del encabezado `<h2>` en `contact.php` 
+para agregar un nuevo mensaje de advertencia sobre el formulario, 
+como este:
+
+```html
+<h2>Contact Us</h2>
+<?php if ($_POST && $suspect) { ?>
+    <p class="warning">Sorry, your mail could not be sent.
+    Please try later.</p>
+<?php } elseif ($missing || $errors) { ?>
+  <p class="warning">Please fix the item(s) indicated.</p>
+<?php } ?>
+```
+
+Esto establece una nueva condición que tiene prioridad sobre el mensaje 
+de advertencia original al ser considerado primero. Comprueba si el 
+array `$_POST` contiene algún elemento (en otras palabras, el formulario 
+ha sido enviado) y si `$suspect`es verdadero. La advertencia tiene un 
+tono deliberadamente neutro. No tiene sentido provocar a los atacantes.
+
+5. Guarde `contact.php` y pruebe el formulario escribiendo cualquier 
+contenido sospechoso en el campo de correo electrónico. Debería ver el 
+nuevo mensaje de advertencia, pero su entrada no se conservará.
+
+Puede verificar su código con `contact_05.php` e `includes/processmail_02.php` 
+en la carpeta ch06.
+
+## Envío de correo electrónico
+
+Antes de continuar, es necesario explicar cómo funciona la función PHP 
+`mail()`, ya que le ayudará a comprender el resto del script de 
+procesamiento. La función PHP `mail()` toma hasta cinco argumentos, 
+todos ellos cadenas, de la siguiente manera:
+
+- La (s) dirección (es) del (los) destinatario (s)
+- La línea de asunto
+- El cuerpo del mensaje
+- Una lista de otros encabezados de correo electrónico (opcional)
+- Parámetros adicionales (opcional)
+
+Las direcciones de correo electrónico del primer argumento pueden estar 
+en cualquiera de los siguientes formatos:
+
 &-------------------------------------------------------------------
