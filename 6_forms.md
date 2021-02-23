@@ -999,4 +999,240 @@ todos ellos cadenas, de la siguiente manera:
 Las direcciones de correo electrónico del primer argumento pueden estar 
 en cualquiera de los siguientes formatos:
 
+```
+'user@example.com'
+'Some Guy <user2@example.com>'
+```
+
+
+Para enviar a más de una dirección, use una cadena separada por comas 
+como esta:
+
+```
+'user@example.com, another@example.com, Some Guy <user2@example.com>'
+```
+
+
+El cuerpo del mensaje debe presentarse como una sola cadena. Esto 
+significa que debe extraer los datos de entrada del array `$_POST` y 
+formatear el mensaje, agregando etiquetas para identificar cada campo. 
+De forma predeterminada, la función `mail()` solo admite texto sin formato. 
+Las líneas nuevas deben utilizar tanto un retorno de carro como un carácter 
+de nueva línea. También se recomienda restringir la longitud de las líneas 
+a no más de 78 caracteres. Aunque suene complicado, puede construir el 
+cuerpo del mensaje automáticamente con aproximadamente 20 líneas de 
+código PHP, como verá en la Solución PHP 6-6. La adición de otros 
+encabezados de correo electrónico se explica en detalle en la siguiente 
+sección.
+
+Muchas empresas de hosting ahora exigen el quinto argumento. Garantiza 
+que el correo electrónico sea enviado por un usuario de confianza, y 
+normalmente consta de su propia dirección de correo electrónico con el 
+prefijo -f (sin un espacio entre ellos), todo entre comillas. Consulte 
+las instrucciones de su empresa de alojamiento para ver si es necesario 
+y el formato exacto que debe adoptar.
+
+Precaución
+
+Nunca debe incorporar la entrada del usuario en el quinto argumento de 
+la función `mail()` porque puede usarse para ejecutar un script arbitrario 
+en el servidor web.
+
+
+## Uso seguro de encabezados de correo electrónico adicionales
+
+Puede encontrar una lista completa de encabezados de correo electrónico 
+en www.faqs.org/rfcs/rfc2076, pero algunos de los más conocidos y útiles 
+le permiten enviar copias de un correo electrónico a otras direcciones 
+(Cc y Bcc) o cambiar la codificación. Cada nuevo encabezado, excepto el 
+final, debe estar en una línea separada terminada por un retorno de carro 
+y un carácter de nueva línea. Esto significa usar las secuencias de 
+escape \ r y \ n en cadenas entre comillas dobles (consulte la Tabla 4-5 
+en el Capítulo 4).
+
+Consejo
+
+Una forma conveniente de formatear encabezados adicionales es definir 
+cada encabezado como un elemento de aray separado y luego usar la 
+función `implode()` para unirlos con "\ r \ n" entre comillas dobles.
+
+De forma predeterminada, `mail()` usa la codificación Latin1 (ISO-8859-1), 
+que no admite caracteres acentuados. En la actualidad, los editores de 
+páginas web utilizan con frecuencia Unicode (UTF-8), que admite la mayoría 
+de los idiomas escritos, incluidos los acentos comúnmente utilizados en 
+los idiomas europeos, así como las escrituras no alfabéticas, como el 
+chino y el japonés. Para asegurarse de que los mensajes de correo 
+electrónico no estén distorsionados, use el encabezado `Content-Type` 
+para configurar la codificación en UTF-8, así:
+
+
+```
+$headers[] = "Content-Type: text/plain; charset=utf-8";
+```
+
+
+También necesita agregar UTF-8 como el atributo charset en una etiqueta 
+`<meta>` en el `<head>` de sus páginas web como esta:
+
+
+```html
+<meta charset="utf-8">
+```
+
+Supongamos que desea enviar copias a otros departamentos, además de 
+una copia a otra dirección que no desea que los demás vean. El correo 
+electrónico enviado por `mail()` a menudo se identifica como proveniente 
+de `nadie@tudominio` (o cualquier nombre de usuario asignado al servidor 
+web), por lo que es una buena idea agregar una dirección "From" más 
+amigable. Así es como construyes esos encabezados adicionales, finalmente 
+uniéndolos con `implode()`:
+
+```
+$headers[] = 'From: Japan Journey<feedback@example.com>';
+$headers[] = 'Cc: sales@example.com, finance@example.com';
+$headers[] = 'Bcc: secretplanning@example.com';
+$headers = implode("\r\n", $headers);
+```
+
+La función `implode()` convierte un array en una cadena uniendo cada 
+elemento del array con la cadena suministrada como primer argumento. 
+Por lo tanto, esto devuelve el array `$headers` como una sola cadena 
+con un retorno de carro y un carácter de nueva línea entre cada 
+elemento del array.
+
+Después de construir el conjunto de encabezados que desea usar, pasa 
+la variable que los contiene como el cuarto argumento a `mail()`, así 
+(asumiendo que la dirección de destino, el asunto y el cuerpo del 
+mensaje ya se han almacenado en variables):
+
+```
+$mailSent = mail($to, $subject, $message, $headers);
+```
+
+
+Los encabezados adicionales codificados como este no presentan ningún 
+riesgo de seguridad, pero cualquier cosa que provenga de la entrada 
+del usuario debe filtrarse antes de que se use. El mayor peligro 
+proviene de un campo de texto que solicita la dirección de correo 
+electrónico del usuario. Una técnica ampliamente utilizada es incorporar 
+la dirección de correo electrónico del usuario en un encabezado "From" 
+o "Resply-to" a, que le permite responder directamente a los mensajes 
+entrantes haciendo clic en el botón "Reply" en su programa de correo 
+electrónico. Es muy conveniente, pero los atacantes con frecuencia 
+intentan empaquetar un campo de entrada de correo electrónico con una 
+gran cantidad de encabezados falsos. La solución PHP anterior eliminó 
+los encabezados más comúnmente utilizados por los atacantes, pero 
+debemos verificar más la dirección de correo electrónico antes de 
+incorporarla en los encabezados adicionales.
+
+Precaución
+
+Aunque los campos de correo electrónico son el objetivo principal de 
+los atacantes, la dirección de destino y la línea de asunto son vulnerables 
+si permite que los usuarios cambien el valor. La entrada del usuario 
+siempre debe considerarse sospechosa. Siempre codifique la dirección de 
+destino y la línea de asunto. Alternativamente, proporcione un menú 
+desplegable de valores aceptables y verifique el valor enviado con un 
+array de los mismos valores.
+
+Solución PHP 6-5: agregar encabezados y automatizar la dirección de respuesta
+
+Esta solución PHP agrega tres encabezados al correo electrónico: 
+`From`, `Content-Type` (para establecer la codificación en UTF-8) y 
+`Reply-To`. Antes de agregar la dirección de correo electrónico del 
+usuario al encabezado final, utiliza un filtro PHP integrado para 
+verificar que el valor enviado se ajusta al formato de una dirección 
+de correo electrónico válida.
+
+Continúe trabajando con la misma página que antes. Alternativamente, 
+use `contact_05.php` e `includes/processmail_02.php` de la carpeta ch06.
+
+1. Los encabezados suelen ser específicos de un sitio web o página en 
+particular, por lo que los encabezados `From`, `Content-Type` se 
+agregarán al script en `contact.php`. Agregue el siguiente código al 
+bloque PHP en la parte superior de la página justo antes de que se 
+incluya `processmail.php`:
+
+```
+$required = ['name', 'comments', 'email'];
+// create additional headers
+$headers[] = 'From: Japan Journey<feedback@example.com>';
+$headers[] = 'Content-Type: text/plain; charset=utf-8';
+require './includes/processmail.php';
+```
+
+2. El propósito de validar la dirección de correo electrónico es 
+asegurarse de que esté en un formato válido, pero el campo puede estar 
+vacío porque decides no hacerlo obligatorio o porque el usuario 
+simplemente lo ignoró. Si el campo es obligatorio pero está vacío, 
+se agregará al array `$missing` y se mostrará la advertencia que agregó 
+en la Solución PHP 6-2. Si el campo no está vacío, pero la entrada no 
+es válida, debe mostrar un mensaje diferente.
+
+Cambie a `processmail.php` y agregue este código en la parte inferior 
+del script:
+
+```
+// validate the user's email
+if (!$suspect && !empty($email)) {
+    $validemail = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    if ($validemail) {
+        $headers[] = "Reply-To: $validemail";
+    } else {
+        $errors['email'] = true;
+    }
+}
+```
+
+Esto comienza por verificar que no se haya encontrado contenido 
+sospechoso y que el campo de correo electrónico no esté vacío. Ambas 
+condiciones están precedidas por el operador lógico Not, por lo que 
+devuelven verdadero si `$suspect` y vacío (`$email`) son ambos falsos. 
+El bucle `foreach` que agregó en la Solución PHP 6-2 asigna todos los 
+elementos esperados en el array `$_POST` a variables más simples, por 
+lo que `$email` contiene el mismo valor que `$_POST['email']`.
+
+La siguiente línea usa `filter_input()` para validar la dirección de 
+correo electrónico. El primer argumento es una constante `PHP`, 
+`INPUT_POST`, que especifica que el valor debe estar en el array 
+`$_POST`. El segundo argumento es el nombre del elemento que desea 
+probar. El argumento final es otra constante de PHP que especifica 
+que desea verificar que el elemento cumple con el formato válido para 
+un correo electrónico.
+
+La función `filter_input()` devuelve el valor que se está probando si 
+es válido. De lo contrario, devuelve falso. Entonces, si el valor 
+enviado por el usuario parece una dirección de correo electrónico 
+válida, `$validemail` contiene la dirección. Si el formato no es 
+válido, `$validemail` es falso. La constante `FILTER_VALIDATE_EMAIL` 
+acepta solo una única dirección de correo electrónico, por lo que se 
+rechazará cualquier intento de insertar varias direcciones de correo 
+electrónico.
+
+Nota
+
+`FILTER_VALIDATE_EMAIL` verifica el formato, no si la dirección es 
+genuina.  Si `$validemail` no es falso, es seguro incorporarlo en un 
+encabezado de correo electrónico `Reply-To`. Pero si `$validemail` es 
+falso, `$errors['email']` se agrega al array `$errors`.
+
+3. Ahora necesita modificar <label> para el campo de correo electrónico 
+en `contact.php`, así:
+
+
+```html
+<label for="email">Email:
+<?php if (in_array('email', $missing)) { ?>
+    <span class="warning">Please enter your email address</span>
+<?php } elseif (isset($errors['email'])) { ?>
+    <span class="warning">Invalid email address</span>
+<?php } ?>
+</label>
+```
+
+Esto agrega una cláusula `elseif` a la primera declaración condicional 
+y muestra una advertencia diferente si la dirección de correo electrónico 
+falla en la validación.
+
+
 &-------------------------------------------------------------------
