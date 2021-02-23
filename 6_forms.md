@@ -154,7 +154,7 @@ pero no sucede nada. No se ha perdido, pero todavía no ha hecho nada para
 procesarlo.
  
 6. En _contact.php_, agregue el siguiente código inmediatamente debajo de 
-7. la etiqueta _</form>_ de cierre:
+la etiqueta de cierre _</form>_:
 
 ```html
 <pre>
@@ -162,7 +162,10 @@ procesarlo.
 </pre>
 ```
 
-
+Esto muestra el contenido del array superglobal `_$ _POST_` si se han 
+enviado datos _post_. Como se explicó en el Capítulo 4, la función 
+_print_r ()_ le permite inspeccionar el contenido de los array; las 
+etiquetas _<pre>_ simplemente facilitan la lectura de la salida.
 
 
 
