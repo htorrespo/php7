@@ -1313,4 +1313,351 @@ if (!$suspect && !$missing && !$errors) {
 }
 ```
 
+
+
+Este bloque de código comienza verificando que `$suspects, `$missing` 
+y `$errors` sean todos falsos. Si es así, construye el cuerpo del 
+mensaje recorriendo el  array $expected, almacenando el resultado en 
+`$message` como una serie de pares `label/value`.
+
+La clave de cómo funciona radica en la siguiente declaración condicional:
+
+```
+
+if (isset($$item) && !empty($$item)) {
+    $val = $$item;
+}
+```
+
+Este es otro ejemplo del uso de una variable variable (consulte “Creación 
+de nuevas variables dinámicamente” en el Capítulo 4). Cada vez que se 
+ejecuta el ciclo, `$item` contiene el valor del elemento actual en el 
+array `$expected`. El primer elemento es `name`, por lo que `$$item` 
+crea dinámicamente una variable llamada `$name. En efecto, la 
+declaración condicional se convierte en esto:
+
+```
+
+if (isset($name) && !empty($name)) {
+    $val = $name;
+}
+```
+
+En el siguiente paso, `$$item` crea una variable llamada `$email`, y 
+así sucesivamente.
+     
+
+Precaución
+
+Esta secuencia de comandos crea el cuerpo del mensaje solo a partir 
+de elementos del array `$expected`. Debe enumerar los nombres de todos 
+los campos de formulario en el array `$expected` para que funcione.
+
+Si un campo no especificado como obligatorio se deja vacío, su valor 
+se establece en "No seleccionado". El código también procesa valores 
+de elementos de opción múltiple, como grupos de casillas de verificación 
+y listas `<select>`, que se transmiten como subarrays del array `$_POST`. 
+La función `implode()` convierte los subarrays en cadenas separadas por 
+comas.
+
+Cada etiqueta se deriva del atributo `name` del campo de entrada en el 
+elemento actual del array `$expected`. El primer argumento de `str_replace()` 
+es un guión bajo. Si se encuentra un guión bajo en el atributo de `name`, 
+se reemplaza por el segundo argumento, una cadena que consta de un solo 
+espacio. Luego, `ucfirst()` establece la primera letra en mayúsculas. 
+Observe que el tercer argumento de `str_replace()` es `$item` (con un 
+solo signo de dólar), por lo que esta vez es una variable ordinaria, 
+no una variable variable. Contiene el valor actual del array `$expected`.
+
+
+Una vez que el cuerpo del mensaje se ha combinado en una sola cadena, 
+la función `wordwrap()` limita la longitud de la línea a 70 caracteres. 
+Los encabezados están formateados como una sola cadena con un retorno 
+de carro y un carácter de nueva línea entre cada uno usando la función 
+`implode()`.
+
+El código que envía el correo electrónico aún debe agregarse, pero para 
+fines de prueba, `$mailSent` se establece en verdadero.
+
+3. Guarde `processmail.php`. Ubique este bloque de código en la parte 
+inferior de `contact.php`:
+
+
+```
+<pre>
+<?php if ($_POST) {print_r($_POST);} ?>
+</pre>
+```
+
+Cámbielo a esto:
+
+
+```
+
+<pre>
+<?php if ($_POST && $mailSent) {
+    echo "Message body\n\n";
+    echo htmlentities($message) . "\n";
+    echo 'Headers: '. htmlentities($headers);
+} ?>
+</pre>
+```
+
+
+Esto verifica que el formulario se haya enviado y que el correo esté listo 
+para enviarse. Luego muestra los valores en `$message` y `$headers`.  
+Ambos valores se pasan a `htmlentities()` para garantizar que se muestren 
+correctamente en el navegador.
+ 
+4. Guarde `contact.php` y pruebe el formulario ingresando su nombre, 
+dirección de correo electrónico y un breve comentario. Al hacer clic en 
+Enviar mensaje, debería ver el cuerpo y los encabezados del mensaje en 
+la parte inferior de la página, como se muestra en la Figura 6-8.
+
+
+Suponiendo que el cuerpo del mensaje y los encabezados se muestren 
+correctamente en la parte inferior de la página, está listo para agregar 
+el código para enviar el correo electrónico. Si es necesario, verifique 
+su código con `contact_07.php` e `includes/processmail_04.php` en la 
+carpeta ch06.
+ 
+5. En `processmail.php`, agregue el código para enviar el correo. 
+Busque la siguiente línea:
+
+
+```
+$mailSent = true;
+```
+
+
+Cámbielo a esto:
+
+
+```
+$mailSent = mail($to, $subject, $message, $headers);
+if (!$mailSent) {
+    $errors['mailfail'] = true;
+}
+```
+
+Esto pasa la dirección de destino, la línea de asunto, el cuerpo del 
+mensaje y los encabezados a la función `mail()`, que devuelve verdadero 
+si logra entregar el correo electrónico al agente de transporte de 
+correo (MTA) del servidor web. Si falla, `$mailSent` se establece en 
+falso y la declaración condicional agrega un elemento al array `$errors`, 
+lo que le permite preservar la entrada del usuario cuando se vuelve a 
+mostrar el formulario.
+ 
+6. En el bloque PHP en la parte superior de `contact.php`, agregue la 
+siguiente declaración condicional inmediatamente después del comando 
+que incluye `processmail.php`:
+
+```
+    require './includes/processmail.php';
+    if ($mailSent) {
+        header('Location: http://www.example.com/thank_you.php');
+        exit;
+    }
+}
+?>
+```
+
+
+Debe probar esto en su servidor remoto, así que reemplace `www.example.com` 
+con su propio nombre de dominio. Esto verifica si `$mailSent` es verdadero. 
+Si es así, la función `header()` redirige a `thank_you.php`, se ha enviado 
+una página reconociendo el mensaje. El comando de salida en la siguiente 
+línea asegura que el script finalice después de que la página haya sido 
+redirigida.
+
+Hay una copia de `thank_you.php` en la carpeta ch06.
+ 
+7. Si `$mailSent` es falso, se vuelve a mostrar `contact.php`; debe advertir 
+al usuario que el mensaje no se pudo enviar. Edite la declaración condicional 
+justo después del encabezado `<h2>`, así:
+
+
+```
+
+<h2>Contact Us </h2>
+<?php if (($_POST && $suspect) || ($_POST && isset($errors['mailfail']))) { ?>
+    <p class="warning">Sorry, your mail could not be sent
+
+. . . .
+```
+
+
+
+Las condiciones originales y nuevas se han envuelto entre paréntesis, 
+por lo que cada par se considera por separado. La advertencia sobre 
+el mensaje no enviado se muestra si el formulario ha sido enviado y 
+se han encontrado frases sospechosas, o si el formulario ha sido enviado 
+y se ha configurado `$errors['mailfail']`.
+ 
+8. Elimine el bloque de código (incluidas las etiquetas `<pre>`) que 
+muestra el cuerpo del mensaje y los encabezados en la parte inferior 
+de `contact.php`.
+ 
+9. Probar esto localmente probablemente resultará en que se muestre la 
+página de agradecimiento, pero el correo electrónico nunca llegue. Esto 
+se debe a que la mayoría de los entornos de prueba no tienen un MTA. 
+Incluso si configura uno, la mayoría de los servidores de correo rechazan 
+el correo de fuentes no reconocidas. Sube `contact.php` y todos los 
+archivos relacionados, incluidos `processmail.php` y `thank_you.php`, 
+a tu servidor remoto y prueba el formulario de contacto allí. No
+olvide que `processmail.php` debe estar en una subcarpeta llamada 
+`includes`.
+
+Puede verificar su código con `contact_08.php` e 
+`includes/processmail_05.php` en la carpeta ch06.
+
+
+## Solución a problemas de `mail()`
+
+Es importante comprender que `mail()` no es un programa de correo 
+electrónico. La responsabilidad de PHP termina tan pronto como pasa 
+la dirección, el asunto, el mensaje y los encabezados al MTA. No tiene 
+forma de saber si el correo electrónico se entrega a su destino previsto. 
+Normalmente, el correo electrónico llega instantáneamente, pero los 
+atascos en la red pueden retrasarlo horas o incluso un par de días.
+Si se te redirige a la página de agradecimiento después de enviar un 
+mensaje desde `contact.php`, pero no llega nada a tu bandeja de entrada, 
+verifica lo siguiente:
+
+
+- ¿El mensaje ha sido detectado por un filtro de spam?
+- ¿Ha comprobado la dirección de destino almacenada en `$to`? Pruebe 
+una dirección de correo electrónico alternativa para ver si marca la 
+diferencia.
+- ¿Ha utilizado una dirección genuina en el encabezado "From"? Es 
+probable que el uso de una dirección falsa o no válida provoque el 
+rechazo del correo. Utilice una dirección válida que pertenezca al mismo 
+dominio que su servidor web.
+- Consulte con su empresa de alojamiento para ver si se requiere el quinto 
+argumento para `mail()`. Si es así, normalmente debería ser una cadena 
+compuesta por `-f` seguida de su dirección de correo electrónico. Por 
+ejemplo, `david@example.com` se convierte en `-fdavid@example.com`.
+
+
+Si aún no recibe mensajes de `contact.php`, cree un archivo con este script:
+
+
+```
+<?php
+ini_set('display_errors', '1');
+$mailSent = mail('you@example.com', 'PHP mail test', 'This is a test email');
+if ($mailSent) {
+    echo 'Mail sent';
+} else {
+    echo 'Failed';
+}
+```
+
+
+Reemplace `you@example.com` con su propia dirección de correo electrónico. 
+Sube el archivo a tu sitio web y carga la página en un navegador.
+
+Si ve un mensaje de error acerca de que no hay un encabezado From, agregue 
+uno como cuarto argumento a la función `mail()`, así:
+
+```
+$mailSent = mail('you@example.com', 'PHP mail test', 'This is a test email',
+'From: me@example.com');
+```
+
+
+Por lo general, es una buena idea usar una dirección diferente a la 
+dirección de destino en el primer argumento.
+
+Si su empresa de alojamiento requiere el quinto argumento, ajuste el 
+código de esta manera:
+
+
+```
+$mailSent = mail('you@example.com', 'PHP mail test', 'This is a test email', null,
+'-fme@example.com');
+```
+
+
+El uso del quinto argumento normalmente reemplaza la necesidad de 
+proporcionar un encabezado From, asi que usar null(sin comillas) como 
+cuarto argumento indica que no tiene valor.
+
+Si ve "Correo enviado" y no llega ningún correo, o si ve "Error" después 
+de probar los cinco argumentos, consulte a su empresa de alojamiento para obtener asesoramiento.
+
+Si recibe el correo electrónico de prueba de este script pero no de 
+`contact.php`, significa que ha cometido un error en el código o que 
+ha olvidado cargar `processmail.php`. Active la visualización de errores 
+temporalmente, como se describe en "¿Por qué mi página está en blanco?" 
+en el Capítulo 3, para comprobar que `contact.php` puede encontrar 
+`processmail.php`.
+
+Consejo
+
+Estaba enseñando en una universidad en Inglaterra y no podía entender 
+por qué no se entregaban los correos de los estudiantes, a pesar de 
+que su código era perfecto. Resultó que el departamento de TI había 
+desactivado `Sendmail` (el MTA) para evitar que el servidor se utilizara 
+para enviar spam.
+
+
+## Manejo de elementos de formulario de opción múltiple
+
+El formulario en `contact.php` usa solo campos de entrada de texto y 
+un área de texto. Para trabajar con éxito con formularios, también 
+necesita saber cómo manejar elementos de opción múltiple, a saber:
+
+- Botones de radio
+- Casillas de verificación
+- Menús de opciones desplegables
+- Listas de opción múltiple
+
+
+El principio detrás de ellos es el mismo que el de los campos de entrada 
+de texto con los que ha estado trabajando: el atributo de nombre del 
+elemento de formulario se usa como clave en el array `$_POST`. Sin 
+embargo, hay algunas diferencias importantes:
+
+- Los grupos de casillas de verificación y las listas de opción múltiple 
+almacenan los valores seleccionados como un array, por lo que debe 
+agregar un par de corchetes vacíos al final del atributo de nombre 
+para estos tipos de entrada. Por ejemplo, para un grupo de casillas 
+de verificación llamado intereses, el atributo de nombre en cada 
+etiqueta `<input>` debe ser `name="interest []"`. Si omite los corchetes, 
+solo el último elemento seleccionado se transmite a través del array 
+`$_POST`.
+
+- Los valores de los elementos seleccionados en un grupo de casillas 
+de verificación o una lista de opción múltiple se transmiten como un 
+subarray del array `$_POST`. El código de la Solución PHP 6-6 
+convierte automáticamente estos subarrays en cadenas separadas por 
+comas. Sin embargo, cuando utilice un formulario para otros fines, 
+debe extraer los valores de los subarrays. Verá cómo hacerlo en 
+capítulos posteriores.
+
+- Los botones de opción, las casillas de verificación y las listas de 
+opción múltiple no se incluyen en el array `$_POST` si no se selecciona 
+ningún valor. En consecuencia, es vital usar `isset()` para verificar 
+su existencia antes de intentar acceder a sus valores al procesar el 
+formulario.
+
+Las restantes soluciones PHP de este capítulo muestran cómo manejar 
+elementos de formulario de opción múltiple. En lugar de analizar 
+cada paso en detalle, solo destacaré los puntos importantes. Tenga 
+en cuenta los siguientes puntos cuando trabaje en el resto de este 
+capítulo:
+
+- El procesamiento de estos elementos se basa en el código de 
+`processmail.php`.
+- Debe agregar el atributo de nombre de cada elemento al arreglo 
+`$expected para que se agregue al cuerpo del mensaje.
+- Para hacer que un campo sea obligatorio, agregue su atributo `name` 
+al array `$required`.
+- Si un campo que no es obligatorio se deja en blanco, el código en 
+`processmail.php` establece su valor en "No seleccionado".
+
+La Figura 6-9 muestra `contact.php` con cada tipo de entrada agregada 
+al diseño original.
+
 &-------------------------------------------------------------------
