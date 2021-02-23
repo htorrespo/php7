@@ -178,16 +178,17 @@ superglobales de PHP, `$ _POST`, que contiene los datos enviados mediante
 el método _post_. El atributo _name_  de cada elemento del formulario 
 se utiliza como clave del array, lo que facilita la recuperación del contenido.
 
- array
-
+```
+       array
 (
     [name] => David
     [email] => david@example.com
     [comments] => Hi!
     [send] => Send message
 )
+```
 
-E array `$ _POST` usa los atributos `name` del formulario para 
+El array `$ _POST` usa los atributos `name` del formulario para 
 identificar cada elemento de datos.
 
 Como acaba de ver, el método `get` envía sus datos adjuntos a la URL, 
