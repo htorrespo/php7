@@ -167,6 +167,15 @@ enviado datos _post_. Como se explicó en el Capítulo 4, la función
 _print_r()_ le permite inspeccionar el contenido de los array; las 
 etiquetas `<pre>` simplemente facilitan la lectura de la salida.
 
+7. Guarde la página y haga clic en el botón Actualizar en su navegador. 
+Probablemente verá una advertencia similar a la siguiente. Esto le 
+indica que los datos se volverán a enviar, que es exactamente lo que 
+desea. Confirme que desea enviar la información nuevamente.
 
+8. El código del paso 6 ahora debería mostrar el contenido de su mensaje 
+debajo del formulario. Todo se ha almacenado en uno de los array 
+superglobales de PHP, `$ _POST`, que contiene los datos enviados mediante 
+el método _post_. El atributo _name_  de cada elemento del formulario 
+se utiliza como clave del array, lo que facilita la recuperación del contenido.
 
 &-------------------------------------------------------------------
