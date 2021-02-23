@@ -465,4 +465,151 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 ```
 
+Consejo
+
+Verificar que el valor de `$_SERVER['REQUEST_METHOD']` sea `POST` es 
+una condición genérica que se puede usar con cualquier formulario 
+independientemente del nombre del botón Enviar.
+
+3. Aunque aun no enviará el correo electrónico, defina dos variables 
+para almacenar la dirección de destino y la línea de asunto del 
+correo electrónico. El siguiente código va dentro de la declaración 
+condicional que creó en el paso anterior:
+
+```
+if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
+    // email processing script
+    $to = 'david@example.com'; // use your own email address
+    $subject = 'Feedback from Japan Journey';
+}
+```
+
+4. A continuación, cree dos arrays, uno que enumere el atributo `name` 
+de cada campo en el formulario y la otra que enumere todos los campos 
+obligatorios. Por el bien de esta demostración, haga que el campo de 
+correo electrónico sea opcional, de modo que solo se requieran los 
+campos `name` y `comments` Agregue el siguiente código dentro del 
+bloque condicional inmediatamente después del código que define la 
+línea de asunto:
+
+```
+    $subject = 'Feedback from Japan Journey';
+    // list expected fields
+    $expected = ['name', 'email', 'comments'];
+    // set required fields
+    $required = ['name', 'comments'];
+}
+```
+
+Consejo
+
+¿Por qué es necesaria ek array `$expected` ? Es para evitar que un 
+atacante inyecte otras variables en el array `$_POST` en un intento de 
+sobrescribir sus valores predeterminados. Al procesar solo las variables 
+que espera, su formulario es mucho más seguro. Se ignoran los valores 
+falsos.
+
+5. La siguiente sección de código no es específica de este formulario, 
+por lo que debe ir en un archivo externo que se puede incluir en 
+cualquier secuencia de comandos de procesamiento de correo electrónico. 
+Cree un nuevo archivo PHP llamado `processmail.php` en la carpeta 
+`includes`. Luego inclúyalo en `contact.php` inmediatamente después 
+del código que ingresó en el paso anterior, así:
+
+```
+    $required = ['name', 'comments'];
+    require './includes/processmail.php';
+}
+```
+
+6. El código en `processmail.php` comienza verificando las variables 
+`$_POST` para los campos obligatorios que se han dejado en blanco. 
+Elimine cualquier código predeterminado insertado por su editor y 
+agregue lo siguiente a `processmail.php`: 
+
+```
+<?php
+foreach ($_POST as $key => $value) {
+    // strip whitespace from $value if not an array
+    if (!is_array($value)) {
+        $value = trim($value);
+    }
+    if (!in_array($key, $expected)) {
+        // ignore the value, it's not in $expected
+        continue;
+    }
+    if (in_array($key, $required) && empty($value)) {
+        // required value is missing
+        $missing[] = $key;
+        $$key = "";
+        continue;
+    }
+    $$key = $value;
+}
+```
+
+Este bucle `foreach` procesa el array `$_POST` eliminando los espacios 
+en blanco iniciales y finales de los campos de texto y asignando el 
+contenido del campo a una variable con un nombre simplificado. 
+Como resultado, `$_POST['email'] `se convierte en `$email`, y así 
+sucesivamente. También verifica si los campos obligatorios se dejan en 
+blanco y los agrega al array `$missing`, estableciendo la variable 
+relacionada en una cadena vacía.
+
+El array `_POST` es un array asociativa, por lo que el ciclo asigna la 
+clave y el valor del elemento actual a `$key` y `$value`, respectivamente. 
+El ciclo comienza verificando que el valor actual no sea un array, 
+usando la función `is_array()` con el operador lógico `Not` (!). Si no 
+es así, la función `trim()` elimina los espacios en blanco iniciales 
+y finales y los reasigna a `$value`. Eliminar los espacios en blanco 
+iniciales y finales evita que alguien presione la barra espaciadora 
+varias veces para evitar completar un campo obligatorio.
+
+
+Nota
+
+Actualmente, el formulario solo tiene campos de entrada de texto, pero 
+se ampliará más adelante para incluir elementos `<select>` y casillas 
+de verificación que envían datos como arrays. Es necesario verificar 
+si el valor del elemento actual es un array porque pasar un array a la 
+función `trim()` desencadena un error.
+
+La siguiente declaración condicional verifica si la clave actual no 
+está en el array `$expected`. Si no es así, la palabra clave `continue` 
+obliga al ciclo a dejar de procesar el elemento actual y pasar al 
+siguiente. Por lo tanto, se ignora todo lo que no esté en el array 
+$expected.
+
+A continuación, verificamos si la clave del array actual está en el 
+array `$required` y si no tiene ningún valor. Si la condición devuelve 
+verdadera, la clave se agrega al arrayz `$missing` y una variable 
+basada en el nombre de la clave se crea dinámicamente y su valor se 
+establece en una cadena vacía. Observe que `$$key` comienza con dos 
+signos de dólar en la siguiente línea:
+
+```
+$$key = "";
+```
+
+Esto significa que es una variable variable (consulte "Crear de nuevas 
+variables dinámicamente" en el Capítulo 4). Entonces, si el valor de 
+`$key` es `"name"`, `$$key` se convierte en `$name`.
+
+Nuevamente, `continue` mueve el bucle al siguiente elemento.
+
+Pero, si llegamos hasta la línea final del ciclo, sabemos que estamos 
+tratando con un elemento que necesita ser procesado, por lo que se 
+crea una variable basada en el nombre de la clave de forma dinámica y 
+el valor actual se asigna a este.
+
+7. Guarde `processmail.php`. Le agregará más código más adelante, pero 
+pasemos ahora al cuerpo principal de `contact.php`. El atributo `action` 
+en la etiqueta del formulario de apertura está vacío. Para propósitos 
+de prueba local, simplemente establezca su valor en el nombre de la 
+página actual:
+
+```
+<form method="post" action="contact.php">
+```
+
 &-------------------------------------------------------------------
