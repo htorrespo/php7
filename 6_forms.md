@@ -164,8 +164,8 @@ la etiqueta de cierre _</form>_:
 
 Esto muestra el contenido del array superglobal `$ _POST` si se han 
 enviado datos _post_. Como se explicó en el Capítulo 4, la función 
-_print_r ()_ le permite inspeccionar el contenido de los array; las 
-etiquetas _<pre>_ simplemente facilitan la lectura de la salida.
+_print_r()_ le permite inspeccionar el contenido de los array; las 
+etiquetas `<pre>` simplemente facilitan la lectura de la salida.
 
 
 
