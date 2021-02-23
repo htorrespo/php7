@@ -178,4 +178,42 @@ superglobales de PHP, `$ _POST`, que contiene los datos enviados mediante
 el método _post_. El atributo _name_  de cada elemento del formulario 
 se utiliza como clave del array, lo que facilita la recuperación del contenido.
 
+ array
+
+(
+    [name] => David
+    [email] => david@example.com
+    [comments] => Hi!
+    [send] => Send message
+)
+
+E array `$ _POST` usa los atributos `name` del formulario para 
+identificar cada elemento de datos.
+
+Como acaba de ver, el método `get` envía sus datos adjuntos a la URL, 
+mientras que el método `post` los envía con los encabezados HTTP para 
+que estén ocultos a la vista. Algunos navegadores limitan la longitud 
+máxima de una URL a unos 2000 caracteres, por lo que el método `get` 
+solo se puede utilizar para pequeñas cantidades de datos. El método 
+`post` se puede utilizar para cantidades de datos mucho mayores. De 
+forma predeterminada, PHP permite hasta 8 MB de datos `post` aunque las 
+empresas de alojamiento pueden establecer un límite diferente.
+
+Sin embargo, la diferencia más importante entre los dos métodos es su 
+uso previsto. El método de `get` está diseñado para usarse en solicitudes 
+que no generan cambios en el servidor, sin importar cuántas veces se 
+haya realizado. En consecuencia, se utiliza principalmente para búsquedas 
+en bases de datos; marcar el resultado de la búsqueda es útil porque todos 
+los criterios de búsqueda están en la URL. Por otro lado, el método 
+`post` está diseñado para peticiones que provocan cambios en el servidor. 
+Por lo tanto, se usa para insertar, actualizar o eliminar registros en 
+una base de datos, cargar archivos o enviar un correo electrónico.
+
+Este capítulo se concentra en el método `post` y su array superglobal 
+asociada, `$ _POST`.
+
+## Obtener datos de formularios con PHP superglobals
+
+
+
 &-------------------------------------------------------------------
