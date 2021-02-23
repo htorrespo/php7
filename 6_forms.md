@@ -612,4 +612,197 @@ página actual:
 <form method="post" action="contact.php">
 ```
 
+
+8. Debe mostrar una advertencia si falta algo. Agregue una declaración 
+condicional en la parte superior del contenido de la página entre el 
+encabezado <h2> y el primer párrafo, así:
+
+
+```html
+<h2>Contact us</h2>
+<?php if ($missing || $errors) { ?>
+<p class="warning">Please fix the item(s) indicated.</p>
+<?php } ?>
+<p>Ut enim ad minim veniam . . . </p>
+```
+
+
+Esto verifica `$missing` y `$errors`, que inicializó como arrays vacios 
+en el paso 1. Como se explica en "La verdad según PHP" en el Capítulo 4, 
+un array vacío se trata como falso, por lo que el párrafo dentro de la 
+declaración condicional no lo es se muestra cuando se carga la página 
+por primera vez. Sin embargo, si no se ha completado un campo obligatorio 
+cuando se envía el formulario, su nombre se agrega a la matriz `$missing`. 
+Un array con al menos un elemento se trata como verdadera. El || significa 
+"o", por lo que este párrafo de advertencia se mostrará si un campo 
+obligatorio se deja en blanco o si se descubre un error. (El array 
+$erros entra en juego en la Solución PHP 6-4).
+
+
+9. Para asegurarse de que funciona hasta ahora, guarde `contact.php` 
+y cárguelo normalmente en un navegador (no haga clic en el botón 
+Actualizar). No se muestra el mensaje de advertencia. Haz clic en 
+Enviar mensaje sin completar ninguno de los campos. Ahora debería ver 
+el mensaje sobre elementos faltantes, como se muestra en la siguiente 
+captura de pantalla.
+
+
+10. Para mostrar un mensaje adecuado junto a cada campo obligatorio 
+que falta, use una declaración condicional de PHP para insertar un 
+`<span>` dentro de la etiqueta `<label>`, así:
+
+```html
+<label for="name">Name:
+<?php if (in_array('name', $missing)) { ?>
+    <span class="warning">Please enter your name</span>
+<?php } ?>
+</label>
+```
+
+La condición usa la función `in_array()` para verificar si el array 
+`$missing` contiene el valor `name`. Si es así, se muestra el `<span>.` 
+`$missing` se define como un array vacío en la parte superior de la 
+secuencia de comandos, por lo que el intervalo no se mostrará cuando 
+se cargue la página por primera vez.
+
+
+11. Inserte advertencias similares para los campos de correo electrónico 
+y comentarios como este:
+
+```html
+    <label for="email">Email:
+    <?php if (in_array('email', $missing)) { ?>
+        <span class="warning">Please enter your email address</span>
+    <?php } ?>
+    </label>
+    <input name="email" id="email" type="text">
+</p>
+<p>
+    <label for="comments">Comments:
+    <?php if (in_array('comments', $missing)) { ?>
+        <span class="warning">Please enter your comments</span>
+    <?php } ?>
+    </label>
+```
+
+El código PHP es el mismo excepto por el valor que busca en el array 
+`$missing`. Es lo mismo que el atributo `name` del elemento de formulario.
+ 
+12. Guarde `contact.php` y pruebe la página nuevamente, primero 
+ingresando nada en ninguno de los campos. Las etiquetas del formulario 
+deben verse como la Figura 6-5.
+
+
+Aunque agregó una advertencia a `<label>` para el campo de correo 
+electrónico, no se muestra porque el correo electrónico no se agregó 
+al array `$required`. Como resultado, el código en `processmail.php` 
+no lo agrega al array `$missing`.
+
+13. Agregue un correo electrónico al array `$required` en el bloque 
+de código en la parte superior de `comments.php`, así:
+
+```
+$required = ['name', 'comments', 'email'];
+```
+
+14. Haz clic en Enviar mensaje nuevamente sin completar ningún campo. 
+Esta vez, verá un mensaje de advertencia junto a cada etiqueta.
+     
+15. Escriba su nombre en el campo `name`. En los campos Correo 
+electrónico y Comentarios, simplemente presione la barra espaciadora 
+varias veces y luego haga clic en Enviar mensaje. El mensaje de 
+advertencia junto al campo Nombre desaparece, pero los otros dos 
+mensajes de advertencia permanecen. El código en `processmail.php` 
+quita los espacios en blanco de los campos de texto, por lo que 
+rechaza los intentos de omitir los campos obligatorios ingresando 
+una serie de espacios. Si tiene algún problema, compare su código 
+con `contact_03.php` e `includes/processmail_01.php` en la carpeta 
+ch06.
+     
+
+Todo lo que se necesita hacer para cambiar los campos obligatorios 
+es cambiar los nombres en el array `$required` y agregar una alerta 
+adecuada dentro de la etiqueta `<label>` del elemento de entrada 
+apropiado dentro del formulario. Es fácil de hacer porque siempre 
+usa el atributo de nombre del elemento de entrada del formulario.
+
+## Conservar la entrada del usuario cuando un formulario está incompleto
+
+Imagínese que ha pasado 10 minutos rellenando un formulario. Hace 
+clic en el botón Enviar y vuelve la respuesta de que falta un campo 
+obligatorio. Es exasperante tener que rellenar todos los campos de 
+nuevo. Dado que el contenido de cada campo está en el array `$_POST`, 
+es fácil volver a mostrarlo cuando se produce un error.
+
+
+Solución PHP 6-3: Creación de campos de formulario fijos
+
+Esta solución PHP muestra cómo usar una declaración condicional para 
+extraer la entrada del usuario del array `$_POST` y volver a mostrarla 
+en los campos de entrada de texto y áreas de texto. Continúe trabajando 
+con los mismos archivos de antes. Alternativamente, use `contact_03.php` 
+e `includes/processmail_01.php` de la carpeta ch06.
+
+
+1. Cuando la página se carga por primera vez, no desea que aparezca 
+nada en los campos de entrada, pero desea volver a mostrar el contenido 
+si falta un campo obligatorio o hay un error. Esa es la clave: si los 
+arrays `$missing` o `$errors` contienen algún valor, el contenido de 
+cada campo debe volver a mostrarse. Establece el texto predeterminado 
+para un campo de entrada de texto con el atributo de valor de la 
+etiqueta `<input>`, así que modifique la etiqueta `<input`> para un 
+nombre como este:
+
+```html
+<input name="name" id="name" type="text"
+<?php if ($missing || $errors) {
+    echo 'value="' . htmlentities($name) . '"';
+} ?>>
+```
+
+La línea dentro de las llaves contiene una combinación de comillas y 
+puntos que pueden confundirlo. Lo primero que debe darse cuenta es que 
+solo hay un punto y coma, justo al final, por lo que el comando echo 
+se aplica a toda la línea. Como se explicó en el Capítulo 3, un punto 
+se denomina operador de concatenación, que une cadenas y variables. 
+Puede dividir el resto de la línea en tres secciones, de la siguiente manera:
+
+```
+'value="' .
+
+htmlentities($name)
+
+. '"'
+```
+
+La primera sección genera `value="` como texto y usa el operador de 
+concatenación para unirlo a la siguiente sección, que pasa `$name` a 
+una función llamada `htmlentities()`. Explicaré por qué es necesario 
+en un momento, pero la tercera sección usa el operador de concatenación 
+nuevamente para unirse a la salida final, que consta únicamente de 
+comillas dobles. Por lo tanto, si `$missing` o `$errors` contienen 
+algún valor, y `$_POST['name']` contiene a Joe, terminará con esto 
+dentro de la etiqueta `<input>` :
+
+```html
+<input name="name" id="name" type="text" value="Joe">
+```
+
+La variable `$name` contiene la entrada del usuario original, que se 
+transmitió a través del array `$_POST`. El bucle `foreach` que creó en 
+`processmail.php` en la Solución PHP 6-2 procesa el array `$_POST` y 
+asigna cada elemento a una variable con el mismo nombre. Esto le permite 
+acceder a `$_POST['nombre']` simplemente como `$name`.
+
+Entonces, ¿por qué necesitamos la función `htmlentities()`? Como sugiere 
+el nombre de la función, convierte ciertos caracteres en sus entidades 
+de caracteres HTML equivalentes. El que le preocupa aquí es la comilla 
+doble. Supongamos que Eric "Slowhand" Clapton decide enviar comentarios 
+a través del formulario. Si usa `$name` por sí solo, la Figura 6-6 muestra 
+lo que sucede cuando se omite un campo `required` y no usa `htmlentities()`.
+
+Pasar el contenido del elemento array `$_POST` a `htmlentities()`, sin 
+embargo, convierte las comillas dobles en el medio de la cadena a `&quot;`. 
+Y, como muestra la Figura 6-7, el contenido ya no está truncado.
+
 &-------------------------------------------------------------------
