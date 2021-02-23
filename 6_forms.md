@@ -154,7 +154,7 @@ pero no sucede nada. No se ha perdido, pero todavía no ha hecho nada para
 procesarlo.
  
 6. En _contact.php_, agregue el siguiente código inmediatamente debajo de 
-la etiqueta de cierre _</form>_:
+la etiqueta de cierre `</form>`:
 
 ```html
 <pre>
