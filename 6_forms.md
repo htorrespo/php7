@@ -1235,4 +1235,82 @@ y muestra una advertencia diferente si la dirección de correo electrónico
 falla en la validación.
 
 
+4. Guarde `contact.php` y pruebe el formulario dejando todos los campos 
+en blanco y haciendo clic en Enviar mensaje. Verá el mensaje de error 
+original. Pruébelo nuevamente ingresando un valor que no sea una dirección 
+de correo electrónico en el campo Correo electrónico o ingresando dos 
+direcciones de correo electrónico. Debería ver el mensaje no válido.
+
+Puede verificar su código con `contact_06.php` e `includes/processmail_03.php` 
+en la carpeta ch06.
+
+
+Solución PHP 6-6: Creación del cuerpo del mensaje y envío del correo
+
+Muchos tutoriales de PHP muestran cómo construir el cuerpo del mensaje 
+manualmente de esta manera:
+
+```
+$message = "Name: $name\r\n\r\n";
+$message .= "Email: $email\r\n\r\n";
+$message .= "Comments: $comments";
+```
+
+Esto agrega etiquetas para identificar de qué campo proviene la entrada 
+e inserta dos retornos de carro y caracteres de nueva línea entre cada 
+uno. Esto está bien para una pequeña cantidad de campos, pero pronto se 
+vuelve tedioso con más campos. Siempre que le dé a sus campos de 
+formulario atributos de nombre significativos, puede construir el cuerpo 
+del mensaje automáticamente con un bucle `foreach`, que es el enfoque 
+adoptado en esta solución PHP.
+
+Continúe trabajando con los mismos archivos que antes. Alternativamente, 
+use `contact_06.php` e `includes/processmail_03.php` de la carpeta ch06.
+
+
+
+1. Agregue el siguiente código en la parte inferior del script en 
+`processmail.php`:
+
+```
+$mailSent = false;
+```
+
+Esto inicializa una variable para redirigir a una página de agradecimiento 
+después de que se haya enviado el correo. Debe establecerse en falso hasta que sepa que la función mail () se ha realizado correctamente.
+ 
+2. Ahora agregue el código que genera el mensaje inmediatamente después:
+
+```
+
+// go ahead only if not suspect, all required fields OK, and no errors
+if (!$suspect && !$missing && !$errors) {
+    // initialize the $message variable
+    $message = ";
+    // loop through the $expected array
+    foreach($expected as $item) {
+        // assign the value of the current item to $val
+        if (isset($$item) && !empty($$item)) {
+            $val = $$item;
+        } else {
+            // if it has no value, assign 'Not selected'
+            $val = 'Not selected';
+        }
+        // if an array, expand as comma-separated string
+        if (is_array($val)) {
+            $val = implode(', ', $val);
+        }
+        // replace underscores in the label with spaces
+        $item = str_replace('_', ' ', $item);
+        // add label and value to the message body
+        $message .= ucfirst($item).": $val\r\n\r\n";
+    }
+    // limit line length to 70 characters
+    $message = wordwrap($message, 70);
+    // format headers as a single string
+    $headers = implode("\r\n", $headers);
+    $mailSent = true;
+}
+```
+
 &-------------------------------------------------------------------
