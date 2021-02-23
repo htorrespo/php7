@@ -215,6 +215,254 @@ asociada, `$ _POST`.
 
 ## Obtener datos de formularios con PHP superglobals
 
+El array superglobal `$_POST` contiene datos enviados mediante el 
+método `post`. No debería sorprender que los datos enviados por el 
+método `get` estén en el array `$_GET`.
 
+Para acceder a los valores enviados por un formulario, simplemente 
+coloque el atributo `name` elemento del formulario entre comillas 
+entre corchetes después de `$ _POST` o `$ _GET`, según el atributo 
+del método del formulario. Por tanto, el correo electrónico se convierte 
+en `$_POST['email']` si se envía mediante el método `post` y 
+`$_GET['email']` si se envía mediante el método `get`. 
+
+Puede encontrar scripts que usen `$_REQUEST`, lo que evita la necesidad 
+de distinguir entre `$_POST` o `$_GET`. Es menos seguro. Siempre 
+debe saber de dónde proviene la información del usuario. `$_REQUEST` 
+también incluye los valores de las cookies, por lo que no tiene idea 
+si está tratando con un valor enviado por el método `post`, uno 
+transmitido a través de la URL o inyectado por una cookie. Utilice 
+siempre `$_POST` o `$_GET`.
+
+Los scripts antiguos pueden usar `$HTTP_POST_VARS` o `$HTTP_GET_VARS`, 
+que tienen el mismo significado que `$_POST` y `$_GET`. Se han 
+eliminado las versiones antiguas. Utilice `$_POST` y `$_GET` en su lugar.
+
+
+## Procesamiento y validación de la entrada del usuario
+
+El objetivo final de este capítulo es enviar la entrada del formulario 
+en `contact.php` por correo electrónico a su bandeja de entrada. El uso 
+de la función `mail ()` de PHP es relativamente sencillo. Requiere un 
+mínimo de tres argumentos: la dirección o direcciones a las que se envía 
+el correo electrónico, una cadena que contiene la línea de asunto y una 
+cadena que contiene el cuerpo del mensaje. El cuerpo del mensaje se 
+construye concatenando (uniendo) el contenido de los campos de entrada 
+en una sola cadena.
+
+Las medidas de seguridad implementadas por la mayoría de los proveedores 
+de servicios de Internet (ISP) hacen que sea difícil, si no imposible, 
+probar la función `mail ()` en un entorno de prueba local. En lugar de 
+saltar directamente al uso de `mail ()`, las Soluciones PHP 6-2 a 6-5 
+se concentran en validar la entrada del usuario para asegurarse de que 
+los campos obligatorios estén completos y muestren mensajes de error. 
+La implementación de estas medidas hace que sus formularios en línea 
+sean más fáciles de usar y seguros.
+
+La utilizacion de JavaScript o elementos y atributos de formulario HTML5
+para verificar la entrada del usuario se denomina validación del lado del 
+cliente porque ocurre en la computadora del usuario (o cliente). Es útil 
+porque es casi instantáneo y puede alertar al usuario sobre un problema 
+sin hacer un viaje de ida y vuelta innecesario al servidor. Sin embargo, 
+la validación del lado del cliente es fácil de eludir. Todo lo que tiene 
+que hacer un usuario malintencionado es enviar datos desde un script 
+personalizado y sus comprobaciones se vuelven inútiles. También es vital 
+verificar la entrada del usuario con PHP.
+
+Consejo
+
+La validación del lado del cliente por sí sola es insuficiente. Siempre 
+verifique los datos de una fuente externa usando la validación del lado 
+del servidor con PHP.
+
+### Creando un script reutilizable
+
+La capacidad de reutilizar el mismo script, tal vez con solo unas pocas 
+ediciones, para varios sitios web es un gran ahorro de tiempo. Sin embargo, 
+enviar los datos de entrada a un archivo separado para su procesamiento 
+dificulta alertar a los usuarios sobre errores sin perder su entrada. Para 
+solucionar este problema, el enfoque adoptado en este capítulo es utilizar 
+lo que se conoce como formulario de autoprocesamiento.
+
+Cuando se envía el formulario, la página se vuelve a cargar y una 
+declaración condicional ejecuta el script de procesamiento. Si la 
+validación del lado del servidor detecta errores, el formulario se puede 
+volver a mostrar con mensajes de error mientras se conserva la entrada 
+del usuario. Partes del script específicas del formulario se incrustarán 
+encima de la declaración `DOCTYPE`. Las partes genéricas y reutilizables 
+estarán en un archivo separado que se puede incluir en cualquier página 
+que requiera un script de procesamiento de correo electrónico.
+
+Solución PHP 6-1: Prevención de secuencias de comandos entre sitios en 
+una forma de autoprocesamiento
+
+Dejar vacío el atributo `action` de una etiqueta de formulario de 
+apertura u omitirlo por completo vuelve a cargar el formulario cuando 
+se envían los datos. Sin embargo, un atributo `action` vacío no es 
+válido en HTML5. PHP tiene una variable superglobal muy conveniente 
+(`$_SERVER ['PHP_SELF']`) que contiene la ruta relativa a la raíz del 
+sitio del archivo actual. Establecerlo como el valor del atributo 
+`action` inserta automáticamente el valor correcto para un formulario 
+de autoprocesamiento, pero usarlo por sí solo expone su sitio a un 
+ataque malicioso conocido como `cross-site scripting (XSS)`. Esta 
+solución PHP explica el riesgo y muestra cómo usar `$_SERVER['PHP_SELF']` 
+de forma segura.
+
+1. Cargue `bad_link.php` en la carpeta ch06 en un navegador. Contiene 
+un único enlace a `form.php` en la misma carpeta; pero el enlace en el 
+HTML subyacente se ha deformado deliberadamente para simular un ataque XSS.
+     
+2. Haga clic en el enlace. Dependiendo del navegador que esté utilizando, 
+debería ver que la página de destino ha sido bloqueada (como se muestra 
+en la Figura 6-3) o el diálogo de alerta de JavaScript que se muestra en 
+la Figura 6-4.
+
+Google Chrome automatically blocks suspected XSS attacks. 
+Not all browsers are capable of blocking XSS attacks. 
+
+Nota
+
+Los enlaces en los archivos de ejercicios para esta solución PHP asumen 
+que están en una carpeta llamada phpsols-4e / ch06 en la raíz de su 
+servidor localhost. Ajústelos si es necesario para que coincidan con 
+su configuración de prueba.
+
+3. Descarte la alerta de JavaScript, si es necesario, y haga clic con 
+el botón derecho para ver la fuente de la página. La línea 10 debería 
+verse similar a esto:
+
+```
+<form method="post" action="/phpsols-4e/ch06/form.php">
+<script>alert('Boo!')</script><foo"">
+```
+
+El enlace mal formado en `bad_link.php` ha inyectado un fragmento de 
+JavaScript en la página inmediatamente después de la etiqueta de 
+apertura `<form>`. En este caso, es una alerta JavaScript inofensiva; 
+pero en un ataque XSS real, podría intentar robar cookies u otra 
+información personal. Tal ataque sería silencioso, dejando al usuario 
+inconsciente de lo que ha sucedido a menos que note el script en la 
+barra de direcciones del navegador.
+
+Esto ha sucedido porque `form.php` usa `$_SERVER['PHP_SELF']` para 
+generar el valor del atributo `action`. El enlace mal formado inserta 
+la ubicación de la página en el atributo `action`, cierra la etiqueta 
+del formulario de apertura y luego inyecta la etiqueta `<script>`, que 
+se ejecuta inmediatamente cuando se carga la página.
+
+
+4. Una forma simple, pero efectiva, de neutralizar este tipo de ataque 
+XSS es pasar `$_SERVER['PHP_SELF']` a la función `htmlentities()` 
+de esta manera:
+
+```html
+<form method="post"  action="<?=
+ htmlentities($_SERVER['PHP_SELF']) ?>">
+```
+
+Esto convierte los corchetes angulares de las etiquetas `<script`> en 
+sus equivalentes de entidad HTML, evitando que se ejecute el script. 
+Aunque funciona, deja la URL mal formada en la barra de direcciones 
+del navegador, lo que podría llevar a los usuarios a cuestionar la 
+seguridad de su sitio. Creo que una mejor solución es redirigir a los 
+usuarios a una página de error cuando se detecta XSS.
+
+
+5. En form.php, cree un bloque PHP encima de la declaración `DOCTYPE` 
+y defina una variable con la ruta relativa a la raíz del sitio al 
+archivo actual de esta manera:
+
+```html
+<?php
+$currentPage = '/phpsols-4e/ch06/form.php';
+?>
+<!doctype html>
+```
+
+6. Ahora compare el valor de `$currentPage` con `$ _SERVER['PHP_SELF']`. 
+Si no son idénticos, use la función `header()` para redirigir al usuario 
+a una página de error y salir inmediatamente del script de esta manera:
+
+```html
+if ($currentPage !== $_SERVER['PHP_SELF']) {
+    header('Location: http://localhost/phpsols-4e/ch06/missing.php');
+    exit;
+}
+```
+
+Precaución
+
+La ubicación pasada a la función `header()` debe ser una URL completamente 
+calificada. Si utiliza un vínculo relativo al documento, el destino se 
+agrega al vínculo mal formado, lo que evita que la página se redirija 
+correctamente.
+
+7. Use `$currentPage` como el valor del atributo `action` en la etiqueta 
+del formulario de apertura:
+
+```html
+<form method="post"  action="<?= $currentPage ?>">
+```
+
+8. Guarde `form.php`, vuelva a `bad_link.php` y vuelva a hacer clic en el 
+enlace. Esta vez debería ser llevado directamente a `missing.php`.
+ 
+9. Cargue `form.php` directamente en el navegador. Debería cargarse y 
+funcionar como se esperaba.  La versión final está en `form_end.php` en 
+la carpeta ch06. El archivo llamado `bad_link_end.php` enlaza con la 
+versión terminada si solo desea probar el script.
+
+Esta técnica implica más código que simplemente pasar `$_SERVER['PHP_SELF']` 
+a la función `htmlentities()`; pero tiene la ventaja de guiar a los 
+usuarios sin problemas a una página de error si han seguido un enlace 
+malicioso a su formulario. Obviamente, la página de error debería 
+vincularse a su menú principal.
+
+Solución PHP 6-2: Asegúrese de que los campos obligatorios no estén en blanco
+
+Cuando los campos obligatorios se dejan en blanco, no obtiene la 
+información que necesita y es posible que el usuario nunca obtenga una 
+respuesta, especialmente si se han omitido los datos de contacto.
+Continúe usando el archivo de "Comprender la diferencia entre `post` y `get`" 
+anteriormente en este capítulo. Alternativamente, use `contact_02.php` de 
+la carpeta ch06 y elimine _02 del nombre del archivo.
+
+1. La secuencia de comandos de procesamiento utiliza dos arrays llamadas 
+`$errores` y` $missing` para almacenar los detalles de los errores y los 
+campos obligatorios que no se han completado. Estos arrays se utilizarán 
+para controlar la visualización de los mensajes de error junto con las
+ etiquetas del formulario. No habrá ningún error cuando la página se 
+cargue por primera vez, así que inicialice `$errors` y `$missing` como 
+arrays vacíos en el bloque de código PHP en la parte superior de 
+`contact.php`, así:
+
+
+```html
+<?php
+include './includes/title.php';
+$errors = [];
+$missing = [];
+?>
+```
+
+ 
+2. La secuencia de comandos de procesamiento de correo electrónico debe 
+ejecutarse solo si se ha enviado el formulario. Use una declaración 
+condicional para verificar el valor de la variable superglobal 
+`$_SERVER['REQUEST_METHOD']`. Si es `POST` (todo en mayúsculas), sabrá 
+que el formulario se envió mediante el método `post`. Agregue el código 
+resaltado en negrita al bloque PHP en la parte superior de la página.
+
+```html
+<?php
+include './includes/title.php';
+$errors = [];
+$missing = [];
+// check if the form has been submitted
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // email processing script
+}
+?>
+```
 
 &-------------------------------------------------------------------
