@@ -2098,8 +2098,26 @@ seleccionada cuando la página se carga por primera vez. También permanece
 sin marcar si el usuario envió el formulario sin confirmar la 
 aceptación de los términos.
 
-El segundo bloque PHP muestra un mensaje de error junto a la etiqueta si se ha establecido $ errors ['terms'].
+El segundo bloque PHP muestra un mensaje de error junto a la 
+etiqueta si se ha establecido `$errors['terms']`.
  
-2. Además de agregar términos a las matrices $ esperado y $ requerido, debe establecer un valor predeterminado para $ _POST ['términos']; luego configure $ errors ['terms'] en el código que procesa los datos cuando se envía el formulario:
+2. Además de agregar términos a los arrays `$expected  y `$requered`, 
+debe establecer un valor predeterminado para $ _POST ['términos']; 
+luego configure `$errors['terms']` en el código que procesa los datos 
+cuando se envía el formulario:
+
+```
+if (!isset($_POST['characteristics'])) {
+    $_POST['characteristics'] = [];
+}
+if (!isset($_POST['terms'])) {
+    $_POST['terms'] = ";
+    $errors['terms'] = true;
+}
+```
+Debe crear `$errors['términos']` solo si se requiere la casilla de 
+verificación. Para una casilla de verificación opcional, simplemente 
+establezca el valor en una cadena vacía si no está incluido en el 
+array `$_POST`.
 
 &-------------------------------------------------------------------
