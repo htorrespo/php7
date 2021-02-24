@@ -32,7 +32,7 @@ Aquí tienes un ejemplo:
 echo "Hello world!";
 ```
 
-Las etiquetas PHP de inicio/fin (<? Php y?>) Se utilizan como delimitadores 
+Las etiquetas PHP de inicio/fin (`<?` y `?>`) Se utilizan como delimitadores 
 de un programa PHP.
 
 
