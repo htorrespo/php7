@@ -183,5 +183,35 @@ web.
 
 La Figura 2-1 muestra la página de información.
 
+La información de la página web info.php se utilizará en los siguientes 
+ejemplos. En la siguiente sección, probará PHP independientemente de un 
+servidor web; utilizará la línea de comandos para simular el proceso 
+seguido por un servidor web equipado con un motor PHP.
+
+
+## Probando PHP sin un servidor web
+
+
+A veces es útil ejecutar y probar el código fuente PHP y ver el resultado 
+como aparecería en el navegador del usuario sin necesidad de un servidor 
+web. Hay intérpretes de PHP, como CLI PHP, que se ejecutan desde la línea 
+de comandos de su sistema operativo; sin embargo, no ofrecen el efecto 
+exacto porque no procesan etiquetas HTML. También hay editores de PHP en 
+línea, algunos de los cuales, como `phptester.ne`t, procesan etiquetas 
+HTML, pero no puedes combinarlas con el software de tu computadora. Para 
+ello, se puede utilizar el siguiente ejemplo, que se basa en CLI PHP.
+
+
+Para probar si ya ha instalado PHP CLI, ingrese lo siguiente en la línea 
+de comando:
+
+
+```
+$ php -v
+```
+
+
+La salida en mi sistema es la siguiente:
+
 
 &____________________________________________________________________
