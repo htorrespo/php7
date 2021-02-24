@@ -46,14 +46,23 @@ echo "Hello world!";
 ?>
 ```
 
+El motor PHP evalúa el programa anterior en una cadena, que es lo que 
+el usuario realmente ve cuando request `hello.php`.
 
-The PHP engine evaluates the previous program to a string, which is what the user actually sees when requesting hello.php.
+
+```
 Hello world!
+```
 
-Other than PHP commands, the PHP engine accepts HTML tags, for instance:
+Aparte de los comandos PHP, el motor PHP acepta etiquetas HTML, por 
+ejemplo:
+
+```
 <?php
 echo "<b>Hello <br>world!</b>";
 ?>
+```
+
 
 El usuario ve el siguiente mensaje en negrita:
 
@@ -117,14 +126,13 @@ $ sudo apt-get install `php7.0`
 
 
 
-Habilite el módulo de Apache `php7.0`, también instalado con el comando 
-anterior.
+Habilite el módulo de Apache `php7.0`, también instalado con el 
+comando anterior.
 
 
 ```terminal
 $ sudo a2enmod php7.0
 ```
-
 
 
 Asegúrese de que el módulo Apache `mpm_prefork` (multiprocesamiento prefork) 
@@ -136,15 +144,12 @@ $ sudo a2dismod mpm_event && sudo a2enmod mpm_prefork
 ```
 
 
-
 Instale también la CLI (Interfaz de línea de comandos) PHP:
-
 
 
 ```terminal
 $ sudo apt-get install php7.0-cli
 ```
-
 
 Reinicie Apache.
 
@@ -152,8 +157,6 @@ Reinicie Apache.
 ```terminal
 $ sudo systemctl reiniciar apache2
 ```
-
-
 
 Para probar su motor PHP recién instalado, cree un archivo PHP, llamado 
 `info.php`, en el directorio raíz del documento. Ingrese el siguiente 
@@ -165,7 +168,6 @@ código fuente PHP:
 phpinfo ();
 ?>
 ```
-
 
 El fragmento de código anterior incluye solo un comando, la llamada a 
 la función `phpinfo()`. Al igual que con cada comando de PHP, termina 
@@ -182,7 +184,7 @@ a `info.php`, por ejemplo:
 192.168.1.100/info.php
 ```
 
-`192.168.1.100` en este ejemplo es la dirección IP privada del servidor 
+ `192.168.1.100` en este ejemplo es la dirección IP privada del servidor 
 web.
 
 La Figura 2-1 muestra la página de información.
@@ -214,25 +216,45 @@ de comando:
 $ php -v
 ```
 
+La salida en mi sistema es la siguiente:
+
+
+## Prueba de PHP sin un servidor web
+
+A veces es útil ejecutar y probar el código fuente PHP y ver el 
+resultado como aparecería en el navegador del usuario sin necesidad 
+de un servidor web. Hay intérpretes de PHP, como CLI PHP, que se 
+ejecutan desde la línea de comandos de su sistema operativo; sin 
+embargo, no ofrecen el efecto exacto porque no procesan etiquetas HTML. 
+También hay editores de PHP en línea, algunos de los cuales, como 
+`phptester.net`, procesan etiquetas HTML, pero no puedes combinarlas 
+con el software de tu computadora. Para ello, se puede utilizar el 
+siguiente ejemplo, que se basa en CLI PHP.
+
+Para probar si ya ha instalado PHP CLI, ingrese lo siguiente en la 
+línea de comando:
+
+
+```
+$ php -v
+```
 
 La salida en mi sistema es la siguiente:
 
-## Testing PHP Without a Web Server
 
-Sometimes it is useful to run and test PHP source code and view the result as it would appear in the user’s browser without requiring a web server. There are PHP interpreters, like CLI PHP, that run from the command line of your operating system; however, they do not deliver the exact effect because they do not process HTML tags. There are also online PHP editors, some of which like phptester.net process HTML tags, but you can’t combine them with the software of your computer. For this purpose, the following example can be used, which relies on CLI PHP.
-
-To test whether you have already installed PHP CLI installed, enter the following at the command line:
-$ php -v
-
-The output on my system is as follows:
+```
 PHP 7.1.17-0ubuntu0.17.10.1 (cli) (built: May  9 2018 17:28:01) ( NTS )
 Copyright (c) 1997-2018 The PHP Group
 Zend Engine v3.1.0, Copyright (c) 1998-2018 Zend Technologies
-    with Zend OPcache v7.1.17-0ubuntu0.17.10.1, Copyright (c) 1999-2018, by Zend Technologies
+with Zend OPcache v7.1.17-0ubuntu0.17.10.1, Copyright (c) 1999-2018, by Zend Technologies
+```
+
 
 To view the available options, use the -h (help) switch.
 
 To simulate the process of using PHP code inside a web page and viewing the result with a browser, without requiring a web server, use the following steps. First create a PHP file that uses HTML tags and also PHP source code. Specifically, create a file called a.php in your home directory using these commands:
+
+
 $ cd ~
 $ gedit a.php
 
