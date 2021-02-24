@@ -1660,4 +1660,265 @@ al array `$required`.
 La Figura 6-9 muestra `contact.php` con cada tipo de entrada agregada 
 al diseño original.
 
+Consejo
+
+Todos los elementos de entrada de formulario HTML5 usan el atributo 
+de `name` y envían valores como texto o como un subarray del array 
+`$_POST`, por lo que debería poder adaptar el código en consecuencia.
+
+
+Solución PHP 6-7: Manejo de grupos de botones de opción
+
+Los grupos de botones de opción le permiten elegir solo un valor. 
+Aunque es común establecer un valor predeterminado en el marcado HTML, 
+no es obligatorio. Esta solución PHP muestra cómo manejar ambos escenarios.
+
+1. La forma más sencilla de tratar los botones de opción es hacer 
+que uno de ellos sea el predeterminado. El grupo de radio siempre se 
+incluye en el array `$_POST` porque siempre se selecciona un valor.
+
+El código para un grupo de radio con un valor predeterminado se ve 
+así (los atributos `name` y el código PHP están resaltados en negrita):
+
+```
+<fieldset id="subscribe">
+    <h2>Subscribe to newsletter?</h2>
+    <p>
+    <input name="subscribe" type="radio" value="Yes" id="subscribe-yes"
+    <?php
+    if ($_POST && $_POST['subscribe'] == 'Yes') {
+        echo 'checked';
+    } ?>>
+    <label for="subscribe-yes">Yes</label>
+    <input name="subscribe" type="radio" value="No" id="subscribe-no"
+    <?php
+    if (!$_POST || $_POST['subscribe'] == 'No') {
+       echo 'checked';
+    } ?>>
+    <label for="subscribe-no">No</label>
+    </p>
+</fieldset>
+```
+
+
+Todos los miembros del grupo de radio comparten el mismo atributo `name`. 
+Debido a que solo se puede seleccionar un valor, el atributo `name` no 
+termina con un par de corchetes vacíos.
+
+La declaración condicional relacionada con el botón Sí comprueba `$_POST` 
+para ver si se ha enviado el formulario. Si es así y el valor de `$_POST['subscribe']` 
+es “Yes”, el atributo marcado se agrega a la etiqueta `<input>`.
+
+En el botón No, la declaración condicional usa || (o). La primera condición 
+es `!$_ POST`, que es verdadera cuando no se ha enviado el formulario. 
+Si es verdadero, el atributo marcado se agrega como valor predeterminado 
+cuando se carga la página por primera vez. Si es falso, significa que 
+el formulario ha sido enviado, por lo que el valor `$_POST['subscribe']` 
+está marcado.
+ 
+2. Cuando un botón de radio no tiene un valor predeterminado, no se 
+incluye en el array `$_POST`, por lo que no es detectado por el bucle 
+en `processmail.php` que construye el array `$missing`. Para asegurarse 
+de que el elemento del botón de opción esté incluido en el array 
+`$_POST`, debe probar su existencia después de que se haya enviado 
+el formulario. Si no está incluido, debe establecer su valor en una 
+cadena vacía, como esta:
+
+
+```
+$required = ['name', 'comments', 'email', 'subscribe'];
+// set default values for variables that might not exist
+if (!isset($_POST['subscribe'])) {
+    $_POST['subscribe'] = ";
+}
+```
+
+
+3. Si el grupo de botones de opción es obligatorio pero no está 
+seleccionado, debe mostrar un mensaje de error cuando se vuelva 
+a cargar el formulario. También necesita cambiar las declaraciones 
+condicionales en las etiquetas `<input>` para reflejar el 
+comportamiento diferente.
+
+El siguiente listado muestra el grupo de botones de opción de 
+suscripción de `contact_09.php`, con todo el código PHP resaltado 
+en negrita:
+
+
+
+```
+<fieldset id="subscribe">
+    <h2>Subscribe to newsletter?
+    <?php if (in_array('subscribe', $missing)) { ?>
+    <span class="warning">Please make a selection</span>
+    <?php } ?>
+    </h2>
+    <p>
+    <input name="subscribe" type="radio" value="Yes" id="subscribe-yes"
+    <?php
+    if ($_POST && $_POST['subscribe'] == 'Yes') {
+        echo 'checked';
+    } ?>>
+    <label for="subscribe-yes">Yes</label>
+    <input name="subscribe" type="radio" value="No" id="subscribe-no"
+    <?php
+    if ($_POST && $_POST['subscribe'] == 'No') {
+        echo 'checked';
+    } ?>>
+    <label for="subscribe-no">No</label>
+    </p>
+</fieldset>
+```
+
+
+La declaración condicional que controla el mensaje de advertencia en la 
+etiqueta `<h2>` utiliza la misma técnica que para los campos de entrada 
+de texto. El mensaje se muestra si el grupo de radio es un elemento 
+obligatorio y está en el array `$missing`.
+
+La declaración condicional que rodea al atributo verificado es la misma 
+en ambos botones de opción. Comprueba si el formulario ha sido enviado 
+y muestra el atributo marcado solo si el valor en `$_POST['subscribe']` 
+coincide.
+
+
+Solución PHP 6-8: Manejo de grupos de casillas de verificación
+
+Las casillas de verificación se pueden utilizar individualmente o en 
+grupos. El método para manejarlos es ligeramente diferente. Esta solución 
+PHP muestra cómo lidiar con un grupo de casillas de verificación llamado 
+intereses. PHP Solution 6-11 explica cómo manejar una sola casilla de 
+verificación.
+
+Cuando se usa como un grupo, todas las casillas de verificación del 
+grupo comparten el mismo atributo `name`, que debe terminar con un par 
+de corchetes vacíos para que PHP transmita los valores seleccionados 
+como un array. Para identificar qué casillas de verificación se han 
+seleccionado, cada una necesita un atributo de valor único.
+
+Si no se selecciona ningún elemento, el grupo de casillas de 
+verificación no se incluye en el array `$_POST`. Una vez enviado el 
+formulario, debe verificar el array `$_POST` para ver si contiene un 
+subarray para el grupo de casillas de verificación. Si no es así, debe 
+crear un subarray vacío como valor predeterminado para el script en 
+`processmail.php`.
+
+1. Para ahorrar espacio, solo se muestran las dos primeras casillas 
+de verificación del grupo. El atributo `name` y las secciones de código 
+PHP están resaltadas en negrita. 
+
+```
+<fieldset id="interests">
+<h2>Interests in Japan</h2>
+<div>
+    <p>
+        <input type="checkbox" name="interests[]" value="Anime/manga"
+        id="anime"
+        <?php
+        if ($_POST && in_array('Anime/manga', $_POST['interests'])) {
+            echo 'checked';
+        } ?>>
+        <label for="anime">Anime/manga</label>
+    </p>
+    <p>
+        <input type="checkbox" name="interests[]" value="Arts & crafts"
+        id="art"
+        <?php
+        if ($_POST && in_array('Arts & crafts', $_POST['interests'])) {
+            echo 'checked';
+        } ?>>
+        <label for="art">Arts & crafts</label>
+    </p>
+. . .
+</div>
+</fieldset>
+```
+
+
+Cada casilla de verificación comparte el mismo atributo `name`, que 
+termina con un par de corchetes vacíos, por lo que los datos se tratan 
+como un array. Si omite los corchetes, `$_POST['intereses']` contiene 
+el valor de solo la primera casilla de verificación seleccionada. 
+Además, `$_POST['intereses']` no existirá si no se ha seleccionado 
+ninguna casilla de verificación. Lo arreglarás en el siguiente paso.
+     
+
+Nota
+
+Aunque los corchetes deben agregarse al atributo `name` para selecciones 
+múltiples, el subarray de los valores seleccionados está en 
+`$_POST['intereses']`, no `$_POST['intereses []']`.
+
+El código PHP dentro de cada elemento de la casilla de verificación 
+desempeña la misma función que en el grupo de botones de opción, 
+envolviendo el atributo marcado en una declaración condicional. La 
+primera condición verifica que se haya enviado el formulario. La 
+segunda condición usa la función `in_array()` para verificar si el 
+valor asociado con esa casilla de verificación está en el subarray 
+`$_POST['intereses']`. Si es así, significa que se seleccionó la 
+casilla de verificación.
+
+
+2. Una vez enviado el formulario, debe verificar la existencia de 
+`$_POST['intereses']`. Si no se ha configurado, debe crear un array 
+vacío como valor predeterminado para que se procese el resto del 
+script. El código sigue el mismo patrón que para el grupo de radio:
+
+
+```
+$required = ['name', 'comments', 'email', 'subscribe', 'interests'];
+// set default values for variables that might not exist
+if (!isset($_POST['subscribe'])) {
+    $_POST['subscribe'] = ";
+}
+if (!isset($_POST['interests'])) {
+    $_POST['interests'] = [];
+}
+```
+
+
+3. Para establecer un número mínimo de casillas de verificación 
+requeridas, use la función `count()` para confirmar el número de 
+valores transmitidos desde el formulario. Si es menor que el mínimo 
+requerido, agregue el grupo al array `$errors`, así:
+
+
+```
+if (!isset($_POST['interests'])) {
+    $_POST['interests'] = [];
+}
+// minimum number of required check boxes
+$minCheckboxes = 2;
+if (count($_POST['interests']) < $minCheckboxes) {
+    $errors['interests'] = true;
+}
+```
+
+
+La función `count()` devuelve el número de elementos en un array, por 
+lo que esto crea `$errors['interests']` si se han seleccionado menos 
+de dos casillas de verificación. Quizás se pregunte por qué he usado 
+una variable en lugar de un número como este:
+
+
+```
+if (count($_POST['interests']) < 2) {
+```
+
+
+Esto ciertamente funciona e implica menos escritura, pero `$minCheckboxes` 
+se pueden reutilizar en el mensaje de error. Almacenar el número en 
+una variable significa que esta condición y el mensaje de error siempre permanecen sincronizados.
+ 
+4. El mensaje de error en el cuerpo del formulario tiene este aspecto:
+
+``
+<h2>Interests in Japan
+<?php if (isset($errors['interests'])) { ?>
+    <span class="warning">Please select at least <?= $minCheckboxes ?></span>
+<?php } ?>
+</h2>
+```
+
+
 &-------------------------------------------------------------------
