@@ -1920,5 +1920,186 @@ una variable significa que esta condición y el mensaje de error siempre permane
 </h2>
 ```
 
+Solución PHP 6-9: uso de un menú de opciones desplegable
+
+Los menús de opciones desplegables creados con la etiqueta `<select>` 
+son similares a los grupos de botones de radio en el sentido de que 
+normalmente permiten al usuario elegir solo una opción de varias. Donde 
+difieren es que siempre se selecciona un elemento en un menú desplegable, 
+incluso si es solo el primer elemento que invita al usuario a seleccionar 
+uno de los otros. Como resultado, el array `$_POST` siempre contiene un 
+elemento que hace referencia a un menú `<select>`, mientras que un grupo 
+de botones de opción se ignora a menos que se preestablezca un valor 
+predeterminado.
+
+1. El siguiente código muestra los dos primeros elementos del menú 
+desplegable en `contact_09.php`, con el código PHP resaltado en negrita. 
+Al igual que con todos los elementos de opción múltiple, el código PHP 
+envuelve el atributo que indica qué elemento se ha elegido. Aunque este 
+atributo se llama checked tanto en los botones de opción como en las 
+casillas de verificación, se llama seleccionado en los menús y listas 
+`<select>`. Es importante utilizar el atributo correcto para volver a 
+mostrar la selección si el formulario se envía sin los elementos 
+obligatorios. Cuando la página se carga por primera vez, el array `$_POST` 
+no contiene elementos, por lo que puede seleccionar la primera `<option>` 
+probando `!$_ POST`. Una vez que se envía el formulario, el array `$_POST` 
+siempre contiene un elemento de un menú desplegable, por lo que no es 
+necesario que pruebe su existencia.
+
+```
+<p>
+    <label for="howhear">How did you hear of Japan Journey?</label>
+    <select name="howhear" id="howhear">
+        <option value="No reply"
+        <?php
+        if (!$_POST || $_POST['howhear'] == 'No reply') {
+            echo 'selected';
+        } ?>>Select one</option>
+        <option value="Apress"
+        <?php
+        if (isset($_POST && $_POST['howhear'] == 'Apress') {
+            echo 'selected';
+        } ?>>Apress</option>
+    . . .
+    </select>
+</p>
+```
+
+2. Aunque siempre se selecciona una opción en un menú desplegable, es 
+posible que desee obligar a los usuarios a realizar una selección 
+diferente a la predeterminada. Para hacerlo, agregue el atributo 
+`name` del menú `<select>` aa array `$required`, luego establezca 
+el atributo `value` y el elemento de array `$_POST` para la opción 
+predeterminada en una cadena vacía, como esta:
+
+```
+<option value=""
+<?php
+if (!$_POST || $_POST['howhear'] == '') {
+    echo 'selected';
+} ?>>Select one</option>
+```
+
+El atributo `value` no es obligatorio en la etiqueta `<option>`, pero 
+si lo omite, el formulario usa el texto entre las etiquetas de apertura 
+y cierre como el valor seleccionado. Por lo tanto, es necesario establecer 
+el atributo value explícitamente en una cadena vacía. De lo contrario, 
+“Seleccionar uno” se transmite como valor seleccionado.
+ 
+3. El código que muestra un mensaje de advertencia si no se ha realizado 
+ninguna selección sigue un patrón familiar:
+
+
+```
+<label for="select">How did you hear of Japan Journey?
+<?php if (in_array('howhear', $missing)) { ?>
+    <span class="warning">Please make a selection</span>
+<?php } ?>
+</label>
+```
+
+
+Solución PHP 6-10: Manejo de una lista de opción múltiple
+
+Las listas de opción múltiple son similares a los grupos de casillas 
+de verificación: permiten al usuario elegir cero o más elementos, por 
+lo que el resultado se almacena en un array. Si no se selecciona ningún 
+elemento, la lista de opción múltiple no se incluye en el array `$_POST`, 
+por lo que debe agregar u subarray vacío de la misma manera que con un 
+grupo de casillas de verificación.
+
+1. El siguiente código muestra los dos primeros elementos de la lista 
+de opción múltiple en `contact_09.php`, con el atributo `name` y el 
+código PHP resaltados en negrita. Los corchetes anexados al atributo 
+de nombre aseguran que almacena los resultados como un array. El código 
+funciona de manera idéntica al grupo de casillas de verificación en 
+la Solución PHP 6-8.
+
+
+```
+<p>
+    <label for="characteristics">What characteristics do you associate with
+    Japan?</label>
+    <select name="characteristics[]" size="6" multiple="multiple"
+    id="characteristics">
+        <option value="Dynamic"
+        <?php
+        if ($_POST && in_array('Dynamic', $_POST['characteristics'])) {
+            echo 'selected';
+        } ?>>Dynamic</option>
+        <option value="Honest"
+        <?php
+        if ($_POST && in_array('Honest', $_POST['characteristics'])) {
+            echo 'selected';
+        } ?>>Honest</option>
+. . .
+    </select>
+</p>
+```
+
+
+2. En el código que procesa el mensaje, establezca un valor predeterminado 
+para una lista de opción múltiple de la misma manera que para un array de 
+casillas de verificación:
+
+
+```
+if (!isset($_POST['interests'])) {
+  $_POST['interests'] = [];
+}
+if (!isset($_POST['characteristics'])) {
+  $_POST['characteristics'] = [];
+}
+```
+
+3. Para hacer que se requiera una lista de opción múltiple y establecer 
+un número mínimo de opciones, use la misma técnica utilizada para un 
+grupo de casillas de verificación en la Solución PHP 6-8.
+
+
+Solución PHP 6-11: Manejo de una única casilla de verificación
+
+La forma en que maneja una sola casilla de verificación es ligeramente 
+diferente a la de un grupo de casillas de verificación. Con una casilla 
+de verificación individual, no agrega corchetes al atributo `name` porque 
+no necesita procesarse como un array. Además, el atributo `value` es 
+opcional. Si no establece el atributo `value`, el valor predeterminado 
+es "On" si la casilla de verificación está seleccionada. Sin embargo, 
+si la casilla de verificación no está seleccionada, su nombre no se 
+incluye en el array `$_POST`, por lo que debe probar su existencia.
+Esta solución PHP muestra cómo agregar una única casilla de 
+verificación que busca la confirmación de que se han aceptado los 
+términos del sitio. Se asume que es necesario seleccionar la casilla 
+de verificación.
+
+1. Este código muestra la casilla de verificación única, con el 
+atributo `name` y el código PHP resaltados en negrita.
+
+
+```
+<p>
+    <input type="checkbox" name="terms" value="accepted" id="terms"
+    <?php
+    if ($_POST && !isset($errors['terms'])) {
+        echo 'checked';
+    } ?>>
+    <label for="terms">I accept the terms of using this website
+    <?php if (isset($errors['terms'])) { ?>
+        <span class="warning">Please select the check box</span>
+    <?php } ?></label>
+</p>
+```
+
+
+El bloque PHP dentro del elemento `<input>` inserta el atributo marcado 
+solo si el array `$_POST` contiene valores y no se ha establecido 
+`$errors['terms']`. Esto asegura que la casilla de verificación no esté 
+seleccionada cuando la página se carga por primera vez. También permanece 
+sin marcar si el usuario envió el formulario sin confirmar la 
+aceptación de los términos.
+
+El segundo bloque PHP muestra un mensaje de error junto a la etiqueta si se ha establecido $ errors ['terms'].
+ 
+2. Además de agregar términos a las matrices $ esperado y $ requerido, debe establecer un valor predeterminado para $ _POST ['términos']; luego configure $ errors ['terms'] en el código que procesa los datos cuando se envía el formulario:
 
 &-------------------------------------------------------------------
