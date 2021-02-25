@@ -657,7 +657,12 @@ alert("Hello World!");
 ```
 
 
-Also, the following source code snippet will run because all script tags are included in the echo PHP message, and therefore the whole script is printed to the web page when the PHP source code evaluates:
+Además, el siguiente fragmento de código fuente se ejecutará porque 
+todas las etiquetas del script están incluidas en el mensaje de PHP 
+`echo` y, por lo tanto, el script completo se imprime en la página web 
+cuando se evalúa el código fuente PHP:
+
+```
 <?php
 echo '
 <script>
@@ -665,8 +670,13 @@ alert("Hello World!");
 </script>
 ';
 ?>
+```
 
-In the next example, the source code will not run because the script’s start and end tags are included inside the PHP block, however, without being included in the echo command :
+En el siguiente ejemplo, el código fuente no se ejecutará porque las 
+etiquetas de inicio y fin del script están incluidas dentro del bloque 
+PHP, sin embargo, sin ser incluidas en el comando `echo`:
+
+```
 <?php
 <script>
 echo '
@@ -674,16 +684,36 @@ alert("Hello World!");
 ';
 </script>
 ?>
+```
 
-In this book, you will see a lot of cases where you have to use PHP and JavaScript in the same command. For instance, sometimes a PHP variable needs to appear to the user in a pop-up window instead of being typed into the browser’s window with the echo command. With PHP belonging to the server side, you don’t give control to the user’s browser to create a pop-up window. You instead include JavaScript in the PHP evaluated page. The following PHP file contains PHP code in two blocks. In the first block, for simplicity, the variable $name is hardwired to a specific value, and in the second block, a PHP block is combined with JavaScript code as part of the alert() text so that the PHP variable $name appears in a pop-up window message:
+En este libro, verá muchos casos en los que debe usar PHP y JavaScript 
+en el mismo comando. Por ejemplo, a veces es necesario que el usuario 
+vea una variable de PHP en una ventana emergente en lugar de escribirla 
+en la ventana del navegador con el comando `echo`. Con PHP que pertenece 
+al lado del servidor, no le da control al navegador del usuario para 
+crear una ventana emergente. En su lugar, incluye JavaScript en la 
+página evaluada de PHP. El siguiente archivo PHP contiene código PHP 
+en dos bloques. En el primer bloque, por simplicidad, la variable 
+`$name` está cableada a un valor específico, y en el segundo bloque, 
+un bloque PHP se combina con código JavaScript como parte del texto 
+`alert()` para que la variable PHP `$name` aparezca en un mensaje de 
+ventana emergente:
+
+```
 <?php
 $name = "Madison";
 ?>
 <script>
 alert("Hello <?php echo $name; ?> ");
 </script>
+```
 
-Consider also the example where the pop-up window appears only if the value of $name is 'Jennifer'. In this case, the whole script needs to be conditionally included in the PHP source code, but it may never run.
+Considere también el ejemplo donde la ventana emergente aparece solo 
+si el valor de `$name` es 'Jennifer'. En este caso, todo el script debe 
+incluirse condicionalmente en el código fuente PHP, pero es posible que 
+nunca se ejecute.
+
+```
 <?php
 $name = 'Susan';
 if ($name === Susan) {
@@ -696,40 +726,76 @@ alert("Hello ' . $name . ' ");
 echo  'Hello';
 }
 ?>
+```
 
-In the previous example, for simplicity, the $name variable was hardwired to the source code instead of allowing for multiple values, e.g., values derived from an HTML form. Like with the script tag, PHP code can be mixed with other HTML tags.
+En el ejemplo anterior, por simplicidad, la variable `$name` estaba 
+cableada al código fuente en lugar de permitir múltiples valores, por 
+ejemplo, valores derivados de un formulario HTML. Al igual que con la 
+etiqueta de secuencia de comandos, el código PHP se puede mezclar con 
+otras etiquetas HTML.
 
-Here’s an example of source code that won’t run:
+A continuación, se muestra un ejemplo de código fuente que no se ejecuta:
+
+```
 <?php
 <b>
 echo "Hello World!";
 </b>
 ?>
+```
 
-On the other hand, the following example runs as expected:
+Por otro lado, el siguiente ejemplo se ejecuta como se esperaba:
+
+```
 <b>
 <?php
 echo "Hello World!";
 ?>
 </b>
+```
 
-Or you can also use the following:
+O también puede utilizar lo siguiente:
+
+```
 <?php
 echo "<b>Hello World!</b>";
 ?>
+```
 
-In the examples used in this section, the PHP program initialized the PHP variables to their values. Next you will use HTML forms that the site visitor uses to submit user-specific data to the web server and then set the PHP variables according to the user preferences.
+En los ejemplos usados en esta sección, el programa PHP inicializó las 
+variables PHP a sus valores. A continuación, utilizará formularios HTML 
+que el visitante del sitio utiliza para enviar datos específicos del 
+usuario al servidor web y luego establecerá las variables PHP de acuerdo 
+con las preferencias del usuario.
 
 
-## Setting the PHP Variables with the GET Method
+## Configuración de las variables de PHP con el método GET
 
-The most common way to allow the user to send data to the web server is to use an HTML form that implements the GET or POST method and also refers to the URL of the PHP program that receives and processes the user data from the action attribute of the form element. In the following example, you will create a web page that includes an HTML form with the method attribute set to GET. First create the HTML file get.html that includes a form to enable the user to insert numbers in two fields and also to select an arithmetic operator with a drop-down list. When the submit button is clicked, the user data is transmitted to the get.php program, which is located, as the relative URL of the action attribute indicates, on the web server that dispatched the current web page and in the same directory as the current web page.
+La forma más común de permitir que el usuario envíe datos al servidor 
+web es usar un formulario HTML que implemente el método GET o POST y 
+también se refiere a la URL del programa PHP que recibe y procesa los 
+datos del usuario del atributo `action` del elemento de formulario. En 
+el siguiente ejemplo, creará una página web que incluye un formulario 
+HTML con el atributo de método establecido en GET. Primero cree el 
+archivo HTML `get.html` que incluye un formulario para permitir al 
+usuario insertar números en dos campos y también seleccionar un operador 
+aritmético con una lista desplegable. Cuando se hace clic en el botón 
+enviar, los datos del usuario se transmiten al programa `get.php`, que 
+se encuentra, como indica la URL relativa del atributo de `action`, en 
+el servidor web que envió la página web actual y en el mismo directorio 
+que el página web actual.
 
-Use the following commands to switch to the server’s document root and create the file get.html:
+Utilice los siguientes comandos para cambiar a la raíz del documento 
+del servidor y crear el archivo `get.html`:
+
+```
 $ cd /var/www/html
 $ sudo gedit get.html
+```
 
-Insert the following HTML source code:
+Inserte el siguiente código fuente HTML:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -753,11 +819,18 @@ font-size:24px;
 </form>
 </body>
 </html>
+```
 
-Create the get.php file in the same directory.
+Crear el archivo `get.php` en el mismo directorio.
+
+```
 $ sudo gedit get.php
+```
 
-Insert the following HTML source code that embeds the PHP source code:
+Insertar el siguiente código fuente HTML que incrusta el código 
+fuente PHP:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -791,15 +864,36 @@ switch($operator) {
 </p>
 </body>
 </html>
+```
 
-With the GET form method array $_GET, a global PHP variable is passed by the PHP engine to get.php, the PHP action program. The $_GET array elements consist of the data sent by the form. By using the name of the form’s element with $_GET as the index to submit a value, the specific value is returned. For instance, with the following command, the PHP variable $num1 gets the value submitted by the form’s field named n1:
+Con la matriz de métodos de formulario GET `$_GET`, el motor PHP pasa 
+una variable PHP global a `get.php`, el programa de acción PHP. Los 
+elementos del array `$_GET` consisten en los datos enviados por el 
+formulario. Al usar el nombre del elemento del formulario con `$_GET` 
+como índice para enviar un valor, se devuelve el valor específico. Por 
+ejemplo, con el siguiente comando, la variable PHP `$num1` obtiene el 
+valor enviado por el campo del formulario llamado `n1`:
+
+```
 $num1 = $_GET["n1"];
+```
 
-Similarly, the value entered by the user in the second field of the type number is assigned to the PHP variable $num2.
+De manera similar, el valor ingresado por el usuario en el segundo 
+campo del número de tipo se asigna a la variable PHP `$num2`.
+
+```
 $num2 = $_GET["n2"];
+```
 
-The drop-down list of the form submits also a value that corresponds to one of the following arithmetic operators: addition (+), subtraction (-), multiplication (*), division (/). The user choice for the operator is then accessed with the PHP $operator variable as follows:
+La lista desplegable del formulario también envía un valor que 
+corresponde a uno de los siguientes operadores aritméticos: suma (`+`), 
+resta (`-`), multiplicación (`*`), división (`/`). A continuación, se 
+accede a la elección del usuario para el operador con la variable de 
+operador PHP `$` de la siguiente manera:
+
+```
 $operator = $_GET["operator"];
+```
 
 Next, $operator enters a PHP switch command that according to the $operator value performs the corresponding arithmetic operation between $num1 and $num2.
 
