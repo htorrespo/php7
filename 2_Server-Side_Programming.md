@@ -1772,17 +1772,42 @@ En la siguiente sección, discutiré el código fuente PHP para la
 validación del formulario.
 
 
-### The validate.php Source Code Commentary
+### Comentario para el código fuente `validate.php`
 
-The Go button of the form, which is of type submit, relays the data to the PHP file indicated by the value of the form’s action attribute. This is set to $_SERVER["PHP_SELF"], which is another variable of the global PHP $_SERVER[] array. This value is filled by the PHP engine on the fly relative to the document root path of the current file, for this example /validate.php. Notice that the action attribute of the form is set as follows:
+El botón `Go` del formulario, que es de tipo enviar, transmite los 
+datos al archivo PHP indicado por el valor del atributo de acción del 
+formulario. Se establece en `$_SERVER["PHP_SELF"]`, que es otra variable 
+del array global PHP `$_SERVER[]`. El motor PHP rellena este valor sobre 
+la marcha en relación con la ruta raíz del documento del archivo actual, 
+para este `example/validate.php`. Observe que el atributo `action` del 
+formulario se establece de la siguiente manera:
+
+```
 action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>
+```
 
-The value of the action is enclosed in the PHP tags so that the value of
+El valor de `action` se incluye en las etiquetas PHP para que el valor de
+
+
+```
 htmlspecialchars($_SERVER["PHP_SELF"])
+```
 
-is actually printed as the action’s value. Function htmlspecialchars() is used to sanitize the file’s pathname so that symbols like the double quote (") is converted to &quot;, which is the equivalent HTML entity. The purpose of this is to avoid a possible $_SERVER["PHP_SELF"] exploit, which is a cross-site scripting (XSS) exploit, where a hacker injects JavaScript code into web pages viewed by other users.
+se imprime realmente como el valor de `action`. La función 
+`htmlspecialchars()` se usa para desinfectar el nombre de la ruta del 
+archivo de modo que los símbolos como las comillas dobles (") se 
+conviertan en `&quot`;, que es la entidad HTML equivalente. El propósito 
+de esto es evitar un posible `$_SERVER[" PHP_SELF "]` exploit, que es 
+un exploit de secuencias de comandos entre sitios (XSS), en el que un 
+pirata informático inyecta código JavaScript en las páginas web que ven 
+otros usuarios.
 
-At the beginning of the PHP source code, three fields are evaluated. For instance, consider the following validation code for the value of the first field sent as $_POST["name"]:
+Al comienzo del código fuente PHP, se evalúan tres campos. Por ejemplo, 
+considere el siguiente código de validación para el valor del primer 
+campo enviado como
+
+```
+$_POST["name"]:
 if (isset($_POST['submit']))
 {
  $name=$_POST["name"];
@@ -1803,30 +1828,69 @@ if (isset($_POST['submit']))
  $valid1=false;
  }
  }
+```
 
-With function isset() , it is ensured that the evaluation takes place only when the submit button is clicked and the submit method is POST. Otherwise, the fields would get evaluated even before the user had the chance to fill them.
+Con la función `isset()`, se garantiza que la evaluación se lleve a 
+cabo solo cuando se hace clic en el botón de envío y el método de envío 
+es `POST`. De lo contrario, los campos se evaluarían incluso antes de 
+que el usuario tuviera la oportunidad de completarlos.
+
+```
 if (isset($_POST['submit']))
+```
 
-The variables $valid1, $valid2, and $valid3 are used as flags to signal a valid (true) or an invalid (false) value for the first, second, and third fields, respectively. Also, the variables $errormsg1, $errormsg2, and $errormsg3 are used to specify the appropriate error message for the first, second, and third fields, respectively. For instance, with the following commands, errormsg3 appears when the value of the code does not have a length of ten characters:
+Las variables `$valid1, `$valid2` y `$valid3` se utilizan como 
+indicadores para señalar un valor válido (verdadero) o no válido 
+(falso) para el primer, segundo y tercer campo, respectivamente. 
+Además, las variables `$errormsg1`, `$errormsg2` y `$errormsg3` se 
+utilizan para especificar el mensaje de error apropiado para el primer, 
+segundo y tercer campo, respectivamente. Por ejemplo, con los 
+siguientes comandos, aparece `errormsg3` cuando el valor del código no 
+tiene una longitud de diez caracteres:
+
+```
 if($len==10)
  $valid3=true;
  else
  {
  $errormsg3.='<p class="error">* Code should be in alphabetic letters and numerical digits format with 10 characters in it.</p>';
+```
 
-The concatenating assignment operator (.=) is a PHP string operator that appends the argument on the right side to the argument on the left side.
 
-The form submits to the same PHP file, where it is included, while the user does not provide the expected values, thus allowing for validating the form. When all three fields are filled with valid values, the following if condition holds true and the header() function runs:
+El operador de asignación de concatenación (`.=`) Es un operador de 
+cadena de PHP que agrega el argumento del lado derecho al argumento 
+del lado izquierdo.
+
+El formulario se envía al mismo archivo PHP, donde se incluye, mientras 
+que el usuario no proporciona los valores esperados, lo que permite 
+validar el formulario. Cuando los tres campos se llenan con valores 
+válidos, lo siguiente si la condición es verdadera y se ejecuta la 
+función `header()`:
+
+```
 if($valid1==true && $valid2==true && $valid3==true)
  header("Location:process.php? code=$code&name=$name&email=$email");
+```
 
-The header() function , which sends raw HTTP headers, is used here with the Location HTTP header. This function redirects the browser to the URL indicated by the Location value. In this example, the value includes the attached query string with the variable-value pairs required to be forwarded to the destination file, process.php. Thus, the function header() provides the escape mechanism to validate.php to break out of the loop of continuously submitting data to itself.
+La función `header()`, que envía encabezados HTTP sin procesar, se usa 
+aquí con el encabezado HTTP Location. Esta función redirige el navegador 
+a la URL indicada por el valor de Ubicación. En este ejemplo, el valor 
+incluye la cadena de consulta adjunta con los pares de variable-valor 
+que se deben reenviar al archivo de destino, `process.php`. Por lo 
+tanto, la función `header()` proporciona el mecanismo de escape para 
+`validar.php` para salir del ciclo de envío continuo de datos a sí mismo.
 
-Create the file process.php in the document root with the following commands:
+Cree el archivo `process.php` en la raíz del documento con los 
+siguientes comandos:
+
+```
 $ cd /var/www/html
 $ sudo gedit process.php
+```
 
-Enter the following source code and save the file:
+Ingrese el siguiente código fuente y guarde el archivo:
+
+```
 <html>
 <head>
 <title>Code evaluation</title>
@@ -1866,36 +1930,72 @@ else
 </p>
 </body>
 </html>
+```
 
-The three variable values submitted (code, name, and email) from header() in file validate.php are now retrieved as var, var2, and var3, respectively. The following if condition looks for the lucky code:
+Los tres valores de variable enviados (`code`, `name` y `email`) desde 
+el `header()` en el archivo `validate.php` ahora se recuperan como 
+`var`, `var2` y `var3`, respectivamente. La siguiente condición `if` 
+busca el código de la suerte:
+
+```
 if(isset($var) && $var == 'SX1DF908RW')
+```
 
-If the condition is true, the following message is returned to the browser:
+Si la condición es verdadera, el siguiente mensaje se devuelve al 
+navegador:
+
+```
 echo nl2br("$var2 congratulations you have entered the lucky code: $var\n You have won one T-shirt. We will contact you soon.");
+```
 
-The function nl2br() is used to translate escape characters to their meaning; for instance, \n is treated now as a newline.
-Test the validate.php form by providing the correct code, SX1DF908RW, as shown in Figure 2-19.
-Open image in new windowFigure 2-19
-Figure 2-19
+La función `nl2br()` se utiliza para traducir los caracteres de escape 
+a su significado; por ejemplo, `\n` ahora se trata como una nueva línea.
 
-The validate.php form filled with the correct code
-Click the Go button. The form is submitted, and the browser redirects to process.php, which displays the message shown in Figure 2-20 to the client browser.
-Open image in new windowFigure 2-20
-Figure 2-20
+Pruebe el formulario `validate.php` proporcionando el código correcto, 
+`SX1DF908RW`, como se muestra en la Figura 2-19.
 
-The message displayed from process.php for the correct code
-Try validating validate.php with a wrong code, as displayed in Figure 2-21.
-Open image in new windowFigure 2-21
-Figure 2-21
+Abrir imagen en una ventana nueva Figura 2-19
 
-Testing validate.php with a wrong code
-Click the Go button to redirect to process.php. The message displayed to the client’s browser is shown in Figure 2-22.
-Open image in new windowFigure 2-22
-Figure 2-22
+Figura 2-19 El formulario `validate.php` lleno con el código correcto
 
-The reply viewed in the user’s browser for a wrong code
+Haga clic en el botón `Go`. Se envía el formulario y el navegador 
+redirige a `process.php`, que muestra el mensaje que se muestra en la 
+Figura 2-20 al navegador del cliente.
 
-Let’s not forget the promise to get back to the user. To save the visitor’s details, the PHP source code is used to provide the interface between the web server and the local filesystem. A new file called code.txt is required to store the winner’s personal details: the full name and the e-mail. With the following PHP code file, code.txt is used to store this information. The file handle $handle is created with fopen(), which in this example is used for writing (w mode) to the file, with the name indicated in the value of $filename. The function fwrite() is used twice to fill the winner’s name and e-mail and also the PHP_EOL value between. This inserts a line break.
+Abrir imagen en una ventana nueva Figura 2-20
+
+Figura 2-20 El mensaje mostrado desde `process.php` para el código 
+correcto
+
+Intente validar `validate.php` con un código incorrecto, como se 
+muestra en la Figura 2-21.
+
+Abrir imagen en una ventana nueva Figura 2-21
+
+Figura 2-21 Prueba de `validate.php` con un código incorrecto
+
+Haga clic en el botón `Go` para redirigir a `process.php`. El mensaje 
+que se muestra en el navegador del cliente se muestra en la Figura 2-22.
+
+Abrir imagen en una ventana nueva Figura 2-22
+
+Figura 2-22 La respuesta vista en el navegador del usuario por un 
+código incorrecto
+
+No olvidemos la promesa de volver con el usuario. Para guardar los 
+detalles del visitante, el código fuente PHP se utiliza para proporcionar 
+la interfaz entre el servidor web y el sistema de archivos local. Se 
+requiere un nuevo archivo llamado `code.txt` para almacenar los datos 
+personales del ganador: el nombre completo y el correo electrónico. Con 
+el siguiente archivo de código PHP, se usa `code.txt` para almacenar 
+esta información. El identificador de archivo `$handle` se crea con 
+`fopen()`, que en este ejemplo se usa para escribir (modo `w`) en el 
+archivo, con el nombre indicado en el valor de `$filename`. La función 
+`fwrite()` se usa dos veces para completar el nombre y el correo 
+electrónico del ganador y también el valor PHP_EOL entre. Esto inserta 
+un salto de línea.
+
+```
 // Save the user's e-mail for contacting him/her
 $filename = "code.txt";
 $handle = fopen($filename, "w") or die(" Unable to open file!");
@@ -1907,17 +2007,28 @@ fwrite($handle, $var3);
 fwrite($handle, PHP_EOL);
 fclose($handle);
 }
+```
 
-To enable the web server (and the PHP engine) to access file code.txt, create it first with the touch command and then change its ownership to belong to the user www-data, a member of the group www-data, which is the user assumed by the web server. At the command line, enter the following:
+Para permitir que el servidor web (y el motor PHP) acceda al archivo 
+`code.txt`, primero créelo con el comando `touch` y luego cambie su 
+propiedad para que pertenezca al usuario `www-data`, un miembro del 
+grupo `www-data`, que es el usuario asumido por el servidor web. En 
+la línea de comando, ingrese lo siguiente:
+
+```
 $ sudo touch /var/www/html/code.txt
 $ sudo chown www-data:www-data /var/www/html/code.txt
+```
 
-Figure 2-23 displays the content of code.txt, including the personal details for the user who provided the correct code.
-Open image in new windowFigure 2-23
-Figure 2-23
+La Figura 2-23 muestra el contenido de `code.txt`, incluidos los datos 
+personales del usuario que proporcionó el código correcto.
 
-The personal details of the winner stored in file code.txt
+Abrir imagen en una ventana nueva Figura 2-23
 
-The user’s personal details are thus saved for contacting the user to claim their prize.
+Figura 2-23 Los datos personales del ganador almacenados en el 
+archivo `code.txt`
 
-&____________________________________________________________________
+De este modo, los datos personales del usuario se guardan para 
+contactar con el usuario y reclamar su premio.
+
+
