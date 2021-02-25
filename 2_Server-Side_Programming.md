@@ -250,15 +250,24 @@ with Zend OPcache v7.1.17-0ubuntu0.17.10.1, Copyright (c) 1999-2018, by Zend Tec
 ```
 
 
-To view the available options, use the -h (help) switch.
+Para ver las opciones disponibles, use la opcion `-h (help)`.
 
-To simulate the process of using PHP code inside a web page and viewing the result with a browser, without requiring a web server, use the following steps. First create a PHP file that uses HTML tags and also PHP source code. Specifically, create a file called a.php in your home directory using these commands:
+Para simular el proceso de usar código PHP dentro de una página web y 
+ver el resultado con un navegador, sin requerir un servidor web, siga 
+los siguientes pasos. Primero cree un archivo PHP que use etiquetas HTML 
+y también código fuente PHP. Específicamente, cree un archivo llamado 
+`a.php` en su directorio de inicio usando estos comandos:
 
 
+```
 $ cd ~
 $ gedit a.php
+```
 
-Enter the following source code and save the file:
+
+Ingrese el siguiente código fuente y guarde el archivo:
+
+```
 <html>
 <head>
 <title>Testing PHP without a web server</title>
@@ -273,52 +282,124 @@ echo $output;
 </b>
 </body>
 </html>
+```
 
-Three PHP commands are included between the start (<?php) and the end (?>) PHP tags. The first one sets the $command variable to the value of the command name that will be executed by the operating system. In this example, the shell command users was used, which lists the logged-in users. The second command uses shell_exec() , which is the PHP function that interfaces with the shell and executes the command given in the argument, in this case users, which is the value of $command. As a result, the users command is executed, and its output is stored to the $output variable. The third command prints the contents of the variable $output in bold since the PHP block is included between the <b> start and end tags.
 
-The file a.php is the original PHP file that will be evaluated and viewed from a browser; however, for this file, the auxiliary file c.php is required to run. Create the file c.php next.
+Se incluyen tres comandos PHP entre las etiquetas PHP inicial (`<?`) 
+y final (`?>`). El primero establece la variable `$command` con el valor 
+del nombre del comando que será ejecutado por el sistema operativo. 
+En este ejemplo, se utilizó el comando shell `users`, que enumera los 
+usuarios que iniciaron sesión. El segundo comando usa `shell_exec()`, 
+que es la función PHP que interactúa con el shell y ejecuta el comando 
+dado en el argumento, en este caso `users`, que es el valor de `$command`. 
+Como resultado, se ejecuta el comando `users` y su salida se almacena 
+en la variable `$output`. El tercer comando imprime el contenido de la 
+variable `$output` en negrita ya que el bloque PHP está incluido entre 
+las etiquetas de inicio y finalización `<b>`.
+
+El archivo `a.php` es el archivo PHP original que será evaluado y visto 
+desde un navegador; sin embargo, para este archivo, se requiere el 
+archivo auxiliar `c.php` para ejecutarse. Cree el archivo `c.php` a 
+continuación.
+
+
+```
 $ gedit c.php
+```
 
-Enter the following source code and save the file:
+Ingrese el siguiente código fuente y guarde el archivo:
+
+
+```
 <?php
 shell_exec("php a.php > b.html");
 shell_exec("firefox b.html");
 ?>
+```
 
-What the program c.php does is run the code of file a.php with PHP CLI and then redirect (>) the output to the HTML file b.html.
+Lo que hace el programa `c.php` es ejecutar el código del archivo 
+`a.php` con PHP CLI y luego redirigir (`>`) la salida al archivo 
+HTML `b.html`.
+
+
+```
 $ php a.php > b.html
+```
 
-Next the Firefox web browser is invoked from the command line to open the web page b.html. This is the equivalent of running the next command from the command line:
+A continuación, se invoca el navegador web Firefox desde la línea de 
+comandos para abrir la página web `b.html`. Este es el equivalente a 
+ejecutar el siguiente comando desde la línea de comandos:
+
+
+```
 $ firefox b.html
+```
 
-After creating a.php and c.php, the command you issue from the command line that starts everything is as follows:
+
+Después de crear `a.php` y `c.php`, el comando que emite desde la línea 
+de comandos que inicia todo es el siguiente:
+
+```
 $ php c.php
+```
 
-Figure 2-2 displays the result of running the previous command: the Firefox window opens and lists the currently logged-in users.
-Open image in new windowFigure 2-2
-Figure 2-2
+La Figura 2-2 muestra el resultado de ejecutar el comando anterior: se
+abre la ventana de Firefox y enumera los usuarios que han iniciado sesión 
+actualmente.
 
-Running c.php from CLI PHP results in displaying file a.php in a web page
-A simple but efficient way to debug PHP code received from a web server by the user browser is to right-click the web page and select View Page Source (or similar) from the pop-up menu. As shown in Figure 2-3, a new tab opens with the evaluated PHP code.
-Open image in new windowFigure 2-3
-Figure 2-3
+Abrir imagen en una ventana nueva Figura 2-2
 
-The source code of the evaluated PHP code
+Figura 2-2 La ejecución de `c.php` desde CLI PHP da como resultado la 
+visualización del archivo `a.php` en una página web
 
-As shown in the web page source resulting from the evaluated PHP code, just one user is currently logged in, and the username is included between the start/end bold tags in the body section of the HTML source code. Starting in the next section, all PHP examples will run through the web server. The Apache web server, introduced in the previous chapter, will be used here (starting in Chapter  5 you will use another open source web server, the Lighttpd).
+Una forma simple pero eficiente de depurar el código PHP recibido de 
+un servidor web por el navegador del usuario es hacer clic con el botón 
+derecho en la página web y seleccionar Ver código fuente de la página 
+(o similar) en el menú emergente. Como se muestra en la Figura 2-3, se 
+abre una nueva pestaña con el código PHP evaluado.
 
-## Running Your First PHP Examples from the Web Server
+Abrir imagen en una nueva ventana Figura 2-3
 
-You will now test PHP files evaluated by the PHP engine and dispatched by the Apache web server. The following examples show how variables are combines with strings and the difference between double and single quotes when used with strings. Also, I explain how you can mix JavaScript and PHP in the same command. Understanding those details in the source code is essential for understanding the web-based projects included in the rest of the book.
+Figura 2-3 El código fuente del código PHP evaluado
+
+Como se muestra en el codigo fuente de la página web resultante del 
+código PHP evaluado, solo un usuario está conectado actualmente, y el 
+nombre de usuario se incluye entre las etiquetas en negrita de `start/end` 
+fin en la sección `body` código fuente HTML. A partir de la siguiente 
+sección, todos los ejemplos de PHP se ejecutarán a través del servidor 
+web. El servidor web Apache, presentado en el capítulo anterior, se 
+utilizará aquí (a partir del Capítulo 5 utilizará otro servidor web de 
+código abierto, Lighttpd).
 
 
-### Working with Variables and Strings
+## Ejecución de sus primeros ejemplos de PHP desde el servidor web
 
-First you’ll see how PHP strings and variables can be combined. Create a new file with a .php file extension in your document root directory.
+Ahora probará los archivos PHP evaluados por el motor PHP y enviados 
+por el servidor web Apache. Los siguientes ejemplos muestran cómo se 
+combinan las variables con `strings` y la diferencia entre comillas 
+simples y dobles cuando se utilizan con `strings`. Además, explico cómo 
+puede mezclar `JavaScript` y `PHP` en el mismo comando. Comprender esos 
+detalles en el código fuente es esencial para comprender los proyectos 
+basados en la web incluidos en el resto del libro.
+
+
+### Trabajar con variables y cadenas
+
+Primero verá cómo se pueden combinar `strings` y variables de PHP. Cree 
+un nuevo archivo con una extensión `.php` en el directorio raíz de su 
+documento.
+
+
+```
 $ cd /var/www/html
 $ sudo gedit test.php
+```
 
-Enter the following source code that does not include any strings and save the test.php file :
+Ingrese el siguiente código fuente que no incluye ningun `string` y 
+guarde el archivo `test.php`:
+
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -341,22 +422,52 @@ echo $var3;
 ?>
 </body>
 </html>
+```
 
-Test the PHP file by entering its URL in the address bar of your browser. If you test from the web server, use the following:
+
+Pruebe el archivo PHP ingresando su URL en la barra de direcciones de 
+su navegador. Si realiza la prueba desde el servidor web, utilice lo 
+siguiente:
+
+
+```
 localhost/test.php
+```
 
-If you also test from the web server or from another computer of your LAN, you can use the following:
+
+Si también realiza la prueba desde el servidor web o desde otra 
+computadora de su LAN, puede usar lo siguiente:
+
+
+```
 192.168.1.100/test.php
+```
 
-Here, 192.168.1.100 is the private IP address of the computer that hosts the web server. Figure 2-4 shows the web page downloaded to the browser.
-Open image in new windowFigure 2-4
-Figure 2-4
 
-The evaluated test.php web page
+Aquí, `192.168.1.100` es la dirección IP privada de la computadora que 
+aloja el servidor web. La Figura 2-4 muestra la página web descargada 
+en el navegador. Abrir imagen en una ventana nueva Figura 2-4
 
-The PHP program uses three variables: $var1 and $var2 that are initialized to specific values, and $var3, whose value is calculated by the addition of the values of the previous two variables. The echo PHP command is used to output the $var3 variable’s value to the web page displayed in your browser. Also, a double forward slash (//) is used to mark a line as a comment. To include multiple continuous lines in a comment, use the slash and star notation, that is, /* for starting and */ for ending.
+Figura 2-4 La página web de `test.php` evaluada
 
-Notice that a variable name in PHP starts with the dollar sign ($). Prepending a variable with the dollar sign may look like overhead, but it is handy when you include the variable in a string. To display this feature, replace the previous PHP code in test.php with the following:
+El programa PHP utiliza tres variables: `$var1` y `$var2` que se 
+inicializan a valores específicos, y `$var3`, cuyo valor se calcula 
+sumando los valores de las dos variables anteriores. El comando 
+`echo PHP` se usa para enviar el valor de la variable `$var3` a la 
+página web que se muestra en su navegador. Además, se usa una barra 
+doble (`//`) para marcar una línea como comentario. Para incluir varias 
+líneas continuas en un comentario, use la notación de barra y estrella, 
+es decir,`/*` para comenzar y `*/` para finalizar.
+
+
+Observe que el nombre de una variable en PHP comienza con el signo 
+dólar (`$`). Anteponer una variable con el signo dólar puede parecer 
+una sobrecarga, pero es útil cuando se incluye la variable en una cadena. 
+Para mostrar esta función, reemplace el código PHP anterior en `test.php` 
+con lo siguiente:
+
+
+```
 <?php
 // working with variables
 $var1 = 5;
@@ -364,11 +475,26 @@ $var2 = 8;
 $var3 = $var1 + $var2;
 echo "The sum of $var1 and $var2 is $var3";
 ?>
+```
 
-Strings in PHP can be included between double (") or single (') quotes. When a variable is inserted in a string with double quote delimiters, it is evaluated to its actual value. The web page in this example displays the following:
+
+Las cadenas en PHP se pueden incluir entre comillas dobles (`"`) o 
+simples (`'`). Cuando se inserta una variable en una cadena con 
+delimitadores de comillas dobles, se evalúa a su valor real. La página 
+web de este ejemplo muestra lo siguiente:
+
+
+```
 The sum of 5 and 8 is 13
+```
 
-This is not the case, however, when single quotes are used as string delimiters. Replace the previous PHP code in test.php with the following:
+
+Sin embargo, este no es el caso cuando se utilizan comillas simples 
+como delimitadores de cadenas. Reemplace el código PHP anterior en 
+`test.php` con lo siguiente:
+
+
+```
 <?php
 // working with variables
 $var1 = 5;
@@ -376,11 +502,23 @@ $var2 = 8;
 $var3 = $var1 + $var2;
 echo 'The sum of $var1 and $var2 is $var3';
 ?>
+```
 
-The web page displays the following:
+
+La página web muestra lo siguiente:
+
+
+```
 The sum of $var1 and $var2 is $var3
+```
 
-You can also use the concatenation operator (.) to concatenate strings and variables. Change the previous PHP code in test.php to the following:
+
+También puede utilizar el operador de concatenación (`.`) Para concatenar 
+cadenas y variables. Cambie el código PHP anterior en `test.php` a lo 
+siguiente:
+
+
+```
 <?php
 // working with variables
 $var1 = 5;
@@ -388,11 +526,19 @@ $var2 = 8;
 $var3 = $var1 + $var2;
 echo "The sum of " . $var1 . " and ". $var2 . " is " . $var3;
 ?>
+```
 
-The web page test.php evaluates now to the following:
+
+La página web `test.php` evalúa ahora lo siguiente:
+
+```
 The sum of 5 and 8 is 13
+```
 
-You can instead use single quotes to have the same effect.
+En su lugar, puede utilizar comillas simples para tener el mismo efecto.
+
+
+```
 <?php
 // working with variables
 $var1 = 5;
@@ -400,29 +546,52 @@ $var2 = 8;
 $var3 = $var1 + $var2;
 echo 'The sum of ' . $var1 . ' and ' . $var2 . ' is ' . $var3;
 ?>
+```
 
 #### Escaping Double or Single Quotes in PHP
 
 
-To include double quotes in a string printed in the echo command without getting them mixed up with the message’s double quotes used as delimiters, you can prepend them with the backslash (\) character. This is referred as escaping the double quotes. Another method is to include the message with the double quote characters in single quote delimiters. For instance, the following PHP file source code allows the double quote to be included in the echo messages:
+Para incluir comillas dobles en una cadena impresa en el comando `echo` 
+sin confundirlas con las comillas dobles del mensaje utilizadas como 
+delimitadores, puede anteponerlas con el carácter de barra invertida 
+(`\`). Esto se conoce como escapar de las comillas dobles. Otro método es 
+incluir el mensaje con los caracteres de comillas dobles en delimitadores 
+de comillas simples. Por ejemplo, el siguiente código fuente del archivo 
+PHP permite incluir comillas dobles en los mensajes de `echo`:
+
+```
 <?php
 echo "This message includes a double quote(\")<br>";
 echo 'This message also includes a double quote(")<br>';
 ?>
+```
 
-Similarly, you can include single quotes in a string by escaping them with the backslash character in a single-quoted string or use double quotes as string delimiters. The following PHP example displays this technique:
+
+De manera similar, puede incluir comillas simples en una cadena 
+escapándolas con el carácter de barra invertida en una cadena entre 
+comillas simples o utilizar comillas dobles como delimitadores de cadena. 
+El siguiente ejemplo de PHP muestra esta técnica:
+
+```
 <?php
 echo 'This message includes a single quote(\')<br>';
 echo "This message also includes a single quote(')";
 ?>
+```
+
+#### Mezcla de JavaScript y PHP
 
 
-#### Mixing JavaScript and PHP
+Si bien JavaScript se usa para el lenguaje de programación del lado del 
+cliente y PHP se usa para el lenguaje del lado del servidor, hay casos 
+en los que HTML y JavaScript deben mezclarse con PHP. Esta sección 
+describe las reglas generales para mezclar JavaScript, PHP y etiquetas 
+HTML.
 
+Para empezar, un archivo PHP puede incluir etiquetas HTML como un archivo 
+HTML común, por ejemplo:
 
-While JavaScript is used for the client-side programming language and PHP is used for the server-side language, there are cases where HTML and JavaScript have to be mixed with PHP. This section outlines the general rules for mixing JavaScript, PHP, and HTML tags.
-
-To start with, a PHP file may include HTML tags such as a common HTML file, for instance:
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -438,21 +607,46 @@ echo "<p>Hello World!</p>";
 ?>
 </body>
 </html>
+```
 
-You can instead use a PHP file with HTML-free content like the following:
+En su lugar, puede utilizar un archivo PHP con contenido sin HTML como 
+el siguiente:
+
+```
 <?php
 echo "Hello World!";
 ?>
+```
 
-A PHP file may also include JavaScript source code, as in the following example:
+Un archivo PHP también puede incluir código fuente JavaScript, como en 
+el siguiente ejemplo:
+
+
+```
 <script>
 document.write("Hello ");
 </script>
 <?php
 echo "World!";
 ?>
+```
 
-In the previous PHP file, the two source code blocks are not mixed, and both functions individually print their own part on the web page, with JavaScript running when the browser loads the page and PHP running before the web page is submitted to the user’s browser. Next you will see some cases where the PHP and JavaScript source code are mixed. As a general rule, HTML tags, like <script>, <style>, etc., may be included in a PHP file, however, not inside a PHP source code block, defined between the <php and ?> delimiters. Otherwise, the PHP code won’t run, and the evaluated web page will display an error message (HTTP error 500). The following example will run because the start and end script tags are outside the PHP block and the JavaScript commands are printed in their place with a PHP echo command :
+En el archivo PHP anterior, los dos bloques de código fuente no están 
+mezclados y ambas funciones imprimen individualmente su propia parte 
+en la página web, con JavaScript ejecutándose cuando el navegador carga 
+la página y PHP ejecutándose antes de que la página web se envíe al 
+navegador del usuario. A continuación, verá algunos casos en los que 
+se mezclan el código fuente PHP y JavaScript. Como regla general, las 
+etiquetas HTML, como `<script>`, `<style>`, etc., pueden incluirse en 
+un archivo PHP, sin embargo, no dentro de un bloque de código fuente 
+PHP, definido entre los delimitadores `<php` y `?>`. De lo contrario, 
+el código PHP no se ejecutará y la página web evaluada mostrará un 
+mensaje de error (`error HTTP 500`). El siguiente ejemplo se ejecutará 
+porque las etiquetas del script de inicio y finalización están fuera 
+del bloque de PHP y los comandos de JavaScript se imprimen en su lugar 
+con un comando `echo` de PHP:
+ 
+```
 <script>
 <?php
 echo '
@@ -460,6 +654,8 @@ alert("Hello World!");
 ';
 ?>
 </script>
+```
+
 
 Also, the following source code snippet will run because all script tags are included in the echo PHP message, and therefore the whole script is printed to the web page when the PHP source code evaluates:
 <?php
