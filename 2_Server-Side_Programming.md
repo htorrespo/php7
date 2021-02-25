@@ -1525,17 +1525,39 @@ $t6 = $t4 + $t5;
 ?>
 ```
 
-In the previous PHP block, the values of the JavaScript textboxes, t1, t2, and t3, are submitted along with two of the values of the PHP section, t4 and t5. The value for the result of the PHP section, appearing in t6, is calculated next from the values of t4 and t5. Function isset() is used to check whether a variable is set.
+En el bloque PHP anterior, los valores de los cuadros de texto de 
+JavaScript, `t1`, `t2` y `t3`, se envían junto con dos de los valores 
+de la sección PHP, `t4` y `t5`. El valor del resultado de la sección 
+PHP, que aparece en `t6`, se calcula a continuación a partir de los 
+valores de `t4` y `t5`. La función `isset()` se usa para verificar si 
+una variable está configurada.
 
-To return the values of t1 up to t6 in the corresponding textboxes, an echo command is included for each text input element in a separate PHP block. For instance, for t1, its last value, maintained in the PHP code in variable $t1, is printed in the first textbox with the following PHP block contained in the input element:
-<input type = "text" id="t1" name = "t1" size=5 value = "<?php echo $t1 ?>" >
+Para devolver los valores de `t1` hasta `t6` en los cuadros de texto 
+correspondientes, se incluye un comando `echo` para cada elemento de 
+entrada de texto en un bloque PHP separado. Por ejemplo, para `t1`, su 
+último valor, mantenido en el código PHP en la variable `$t1`, se 
+imprime en el primer cuadro de texto con el siguiente bloque PHP 
+contenido en el elemento de entrada:
 
-The previous input tag processed by the PHP engine, for instance when t1 currently has the value 12, is as follows:
-<input type = "text" id="t1" name = "t1" size=5 value = "12" >
+```
+<input type = "text" id = "t1" name = "t1" size = 5 value = "<? php echo $ t1?>">
+```
 
-This value, carried to the server side and returned to the client side, is maintained to retain the state of the two calculators.
+La etiqueta de entrada anterior procesada por el motor PHP, por ejemplo, 
+cuando `t1` tiene actualmente el valor `12`, es la siguiente:
 
-To enable the evaluated page to use the JavaScript calculator, the script of program2.html is also included in addition2.php.
+```
+<input type = "text" id = "t1" name = "t1" size = 5 value = "12">
+```
+
+Este valor, trasladado al lado del servidor y devuelto al lado del 
+cliente, se mantiene para conservar el estado de las dos calculadoras.
+
+
+Para permitir que la página evaluada utilice la calculadora JavaScript, 
+el script `program2.html` también se incluye en `additional2.php`.
+
+```
 <script>
 function function1() {
 var x = Number(document.getElementById("t1").value);
@@ -1552,31 +1574,53 @@ var z = x + y;
 document.getElementById("t3").value = z;
 }
 </script>
+```
 
-Figure 2-14 shows the results. You can access the JavaScript fields in addition2.php to make further local additions.
-Open image in new windowFigure 2-14
-Figure 2-14
+La figura 2-14 muestra los resultados. Puede acceder a los campos de 
+JavaScript en `added2.php` para realizar más adiciones locales.
 
-The new version addition2.php enables both remote PHP additions and local JavaScript additions
+Abrir imagen en una ventana nueva Figura 2-14
 
-Next you’ll create the final version of this site.
+Figura 2-14 La nueva versión `added2.php` permite adiciones remotas de 
+PHP y adiciones locales de JavaScript
+
+A continuación, creará la versión final de este sitio.
 
 
-### The Third Version of the JavaScript/PHP Addition Web Page
+### Tercera versión de la página web adición de JavaScript/PHP
 
-Since addition2.php evaluates to the program2.php web page that submits the data, program2.php can be completely omitted from the site. Therefore, the only PHP file required, addition.php, can replace program2.php as the home directory of the site. The following URL will be used:
-localhost/addition2.php
+Dado que `added2.ph`p evalúa la página web `program2.php` que envía 
+los datos, `program2.php` puede omitirse por completo del sitio. Por 
+lo tanto, el único archivo PHP requerido, `added.php`, puede reemplazar 
+a `program2.ph`p como directorio de inicio del sitio. Se utilizará la 
+siguiente URL:
 
-In the following section, you will create a site that validates promotional codes dispatched from an HTML form and uses PHP to validate the data submitted by this form.
+```
+localhost/added2.php
+```
+
+En la siguiente sección, creará un sitio que valida los códigos 
+promocionales enviados desde un formulario HTML y utiliza PHP para 
+validar los datos enviados por este formulario.
 
 
 ## Form Validation with PHP
 
-So far you have used HTML and JavaScript to validate a web page. Another option you have is to use PHP. With PHP you validate the web page remotely. To test this scheme, create a new PHP site that simulates a scenario where promotional codes are redeemed so that the user can win free products. At the Linux terminal, create the validate.php file in the document root of the web server.
+Hasta ahora ha utilizado HTML y JavaScript para validar una página web. 
+Otra opción que tienes es usar PHP. Con PHP valida la página web de 
+forma remota. Para probar este esquema, cree un nuevo sitio PHP que 
+simule un escenario donde se canjeen códigos promocionales para que el 
+usuario pueda ganar productos gratis. En la terminal de Linux, cree el 
+archivo `validate.php` en la raíz del documento del servidor web.
+
+```
 $ cd /var/www/html
 $ sudo gedit validate.php
+```
 
-Enter the following source code and save the file:
+Ingrese el siguiente código fuente y guarde el archivo:
+
+```
 <html>
 <head>
 <title>PHP Form Validation</title>
@@ -1686,29 +1730,46 @@ if (isset($_POST['submit']))
 </form>
 </body>
 </html>
+```
 
-As displayed in Figure 2-15, validate.php creates a web page that includes a form with three fields and a submit button, with the caption Go.
-Open image in new windowFigure 2-15
-Figure 2-15
+Como se muestra en la Figura 2-15, `validate.php` crea una página web 
+que incluye un formulario con tres campos y un botón de envío, con el 
+título `Go`.
 
-The web page created by validate.php
-For this form, all fields are required to be filled in, and the code must be an alphanumeric string of 10 characters. Figure 2-16 displays the error messages generated by the PHP code when the user clicks the Go button without completing all the fields.
-Open image in new windowFigure 2-16
-Figure 2-16
+Abrir imagen en una ventana nueva Figura 2-15
 
-The error messages displayed in the web page when fields are incomplete
-Test the form by completing just two of the fields, e.g., Full Name and Code, with the latter including only three characters. Figure 2-17 displays an example. Click the Go button.
-Open image in new windowFigure 2-17
-Figure 2-17
+Figura 2-15 La página web creada por `validate.php`
 
-Testing the form with only two fields completed
-The PHP source code validates the form according to the rule set and displays two warnings, one for the empty field and one for the length of the string entered in the Code textbox. Figure 2-18 displays the warnings.
-Open image in new windowFigure 2-18
-Figure 2-18
+Para este formulario, todos los campos deben completarse y el código 
+debe ser una cadena alfanumérica de 10 caracteres. La Figura 2-16 
+muestra los mensajes de error generados por el código PHP cuando el 
+usuario hace clic en el botón `Go` sin completar todos los campos.
 
-The warnings displayed for the entries of Figure 2-16
+Abrir imagen en una ventana nueva Figura 2-16
 
-In the following section, I’ll discuss the PHP source code for the form validation.
+Figura 2-16 Los mensajes de error que se muestran en la página web 
+cuando los campos están incompletos
+
+Pruebe el formulario completando solo dos de los campos, por ejemplo, 
+Nombre completo y Código, y este último incluye solo tres caracteres. 
+La Figura 2-17 muestra un ejemplo. Haga clic en el botón `Go`.
+
+Abrir imagen en una ventana nueva Figura 2-17
+
+Figura 2-17 Prueba del formulario con solo dos campos completados
+
+El código fuente PHP valida el formulario de acuerdo con el conjunto de 
+reglas y muestra dos advertencias, una para el campo vacío y otra para 
+la longitud de la cadena ingresada en el cuadro de texto Código. La 
+Figura 2-18 muestra las advertencias.
+
+Abrir imagen en una ventana nueva Figura 2-18
+
+Figura 2-18 Las advertencias que se muestran para las entradas de la 
+Figura 2-16
+
+En la siguiente sección, discutiré el código fuente PHP para la 
+validación del formulario.
 
 
 ### The validate.php Source Code Commentary
