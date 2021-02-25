@@ -769,7 +769,7 @@ usuario al servidor web y luego establecerá las variables PHP de acuerdo
 con las preferencias del usuario.
 
 
-## Configuración de las variables de PHP con el método GET
+## Configuración de las variables PHP con el método GET
 
 La forma más común de permitir que el usuario envíe datos al servidor 
 web es usar un formulario HTML que implemente el método GET o POST y 
@@ -947,16 +947,20 @@ PHP, que se utiliza para completar el array `$_GET` y proporcionar al
 programa PHP las variables definidas por el usuario.
 
 
-## Setting the PHP Variables with the POST Method
+## Configuración de las variables PHP con el método POST
 
-Let’s now try the POST method of the form element, which is another option for submitting data to the web server. Create the file post.html as follows:
+Probemos ahora el método POST del elemento de formulario, que es otra 
+opción para enviar datos al servidor web. Cree el archivo `post.html` 
+de la siguiente manera:
 
 ```
 $ cd /var/www/html
 $ sudo gedit post.html
 ```
 
-Enter the following HTML source code, which differs from the get.html code only by the values of the form attributes method and action:
+Introduzca el siguiente código fuente HTML, que se diferencia del 
+código `get.html` solo por los valores del método y la acción de los 
+atributos del formulario:
 
 ```
 <!DOCTYPE html>
@@ -983,15 +987,16 @@ font-size:24px;
 </body>
 </html>
 ```
-
-The method used is therefore POST, and the PHP file post.php is used to handle the user request. Create the file post.php also at the document root as follows:
+Por tanto, el método utilizado es `POST`, y el archivo PHP `post.php` 
+se utiliza para gestionar la peticion del usuario. Cree el archivo 
+`post.php` también en la raíz del documento de la siguiente manera:
 
 ```
 $ cd /var/www/html
 $ sudo gedit post.php
 ```
 
-Enter the following source code and save the file:
+Ingrese el siguiente código fuente y guarde el archivo:
 
 ```
 <!DOCTYPE html>
@@ -1029,40 +1034,64 @@ switch($operator) {
 </html>
 ```
 
-To test the client-server interaction of this example, use another computer in your LAN and in the browser’s address bar enter the following:
+Para probar la interacción cliente-servidor de este ejemplo, use otra 
+computadora en su LAN y en la barra de direcciones del navegador ingrese 
+lo siguiente:
 
 ```
 192.168.1.100/post.html
 ```
 
-Here, 192.168.1.100 is the private IP address of the computer that hosts your web server. Alternatively, you can test the example from the same computer where your web server resides by entering the following:
+Aquí, `192.168.1.100` es la dirección IP privada de la computadora que 
+aloja su servidor web. Alternativamente, puede probar el ejemplo desde 
+la misma computadora donde reside su servidor web ingresando lo 
+siguiente:
 
 ```
 127.0.0.1/post.html
 ```
 
-Provide a numeric value for each of the two fields and choose also an arithmetic operator from the drop-down list. In Figure 2-7, the two form fields of the web page post.html are completed with the numeric values 3000 and 5, respectively, and the division operator is selected from the drop-down list.
-Open image in new windowFigure 2-7
-Figure 2-7
+Proporcione un valor numérico para cada uno de los dos campos y elija 
+también un operador aritmético de la lista desplegable. En la Figura 
+2-7, los dos campos de formulario de la página web `post.html` se 
+completan con los valores numéricos `3000` y `5`, respectivamente, y 
+el operador división se selecciona de la lista desplegable.
+Abrir imagen en una ventana nueva Figura 2-7
 
-The web page post.html with the form completed
-Click the Calculate button. The form values are submitted to post.php. On the web server, the PHP engine is invoked, and the form values are retrieved from the global PHP variable $_POST, which is an array similar to $_GET with the values submitted from the form elements. The PHP source code performs the division between 3000 and 5. The result is output with the echo command to the web page, as displayed in Figure 2-8, and is sent back from the web server to the user.
-Open image in new windowFigure 2-8
-Figure 2-8
+Figura 2-7 La página web `post.html` con el formulario completado
 
-The evaluated post.php web page as it appears in the user’s browser
+Haga clic en el botón Calcular. Los valores del formulario se envían a 
+`post.php`. En el servidor web, se invoca el motor PHP y los valores 
+del formulario se recuperan de la variable global `$_POST`, que es un 
+array similar a `$_GET` con los valores enviados desde los elementos 
+del formulario. El código fuente PHP realiza la división entre `3000` 
+y `5`. El resultado se envía con el comando `echo` a la página web, 
+como se muestra en la Figura 2-8, y se envía desde el servidor web al 
+usuario.
 
-Notice that in the address bar of your browser the URL remains the same. With the POST method, the data is not included in the URL of the HTTP request line, as with the method GET, but is rather appended to the body of the HTTP request sent to the web server. In the following section, another form is used to submit data to a PHP program on the server, and this process is compared with the JavaScript code that performs the corresponding calculation locally.
+Abrir imagen en una ventana nueva Figura 2-8
+
+Figura 2-8 La página web `post.php` evaluada como aparece en el 
+navegador del usuario
+
+Tenga en cuenta que en la barra de direcciones de su navegador, la URL 
+sigue siendo la misma. Con el método `POST`, los datos no se incluyen 
+en la URL de la línea de solicitud HTTP, como con el método `GET`, sino 
+que se añaden al cuerpo de la peticion HTTP enviada al servidor web. En 
+la siguiente sección, se utiliza otro formulario para enviar datos a un 
+programa PHP en el servidor, y este proceso se compara con el código 
+JavaScript que realiza el cálculo correspondiente localmente.
 
 
 ## Running Client-Side vs. Server-Side Programs
 
 You will next compare how server-side programs and client-side programs act, using JavaScript and PHP source code embedded in the same web page. Both languages are used to perform the same operation, specifically an arithmetic addition. JavaScript runs on the client side in the client’s browser and displays the web page. PHP runs on the server side since the addition is performed on the web server that provides the specific web page.
-A simple pattern for defining the programming process is to input the data to the source code and output the results. With JavaScript, the web server submits the source code via the network, and then the input/output data is used locally on the client’s system. With PHP, the contrary applies: the client submits the data to the server, which makes the calculation remotely to the client, and the output is sent back to the client, as shown in Figure 2-9.
-Open image in new windowFigure 2-9
-Figure 2-9
 
-Defining the programming process
+A simple pattern for defining the programming process is to input the data to the source code and output the results. With JavaScript, the web server submits the source code via the network, and then the input/output data is used locally on the client’s system. With PHP, the contrary applies: the client submits the data to the server, which makes the calculation remotely to the client, and the output is sent back to the client, as shown in Figure 2-9.
+
+Open image in new windowFigure 2-9
+
+Figure 2-9 Defining the programming process
 
 
 ## The JavaScript/PHP Addition Web Page
