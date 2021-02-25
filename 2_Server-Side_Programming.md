@@ -947,7 +947,7 @@ PHP, que se utiliza para completar el array `$_GET` y proporcionar al
 programa PHP las variables definidas por el usuario.
 
 
-## Configuración de las variables PHP con el método POST
+## Configuración de variables PHP con el método POST
 
 Probemos ahora el método POST del elemento de formulario, que es otra 
 opción para enviar datos al servidor web. Cree el archivo `post.html` 
@@ -1083,24 +1083,48 @@ programa PHP en el servidor, y este proceso se compara con el código
 JavaScript que realiza el cálculo correspondiente localmente.
 
 
-## Running Client-Side vs. Server-Side Programs
+## Ejecución de programas del lado del cliente frente a del lado del servidor
 
-You will next compare how server-side programs and client-side programs act, using JavaScript and PHP source code embedded in the same web page. Both languages are used to perform the same operation, specifically an arithmetic addition. JavaScript runs on the client side in the client’s browser and displays the web page. PHP runs on the server side since the addition is performed on the web server that provides the specific web page.
+A continuación, comparará cómo actúan los programas del lado del 
+servidor y los programas del lado del cliente, utilizando JavaScript 
+y código fuente PHP incrustado en la misma página web. Ambos lenguajes 
+se utilizan para realizar la misma operación, específicamente una suma 
+aritmética. JavaScript se ejecuta en el lado del cliente en el navegador 
+del cliente y muestra la página web. PHP se ejecuta en el lado del 
+servidor, ya que la adición se realiza en el servidor web que proporciona 
+la página web específica.
 
-A simple pattern for defining the programming process is to input the data to the source code and output the results. With JavaScript, the web server submits the source code via the network, and then the input/output data is used locally on the client’s system. With PHP, the contrary applies: the client submits the data to the server, which makes the calculation remotely to the client, and the output is sent back to the client, as shown in Figure 2-9.
+Un patrón simple para definir el proceso de programación es ingresar 
+los datos al código fuente y generar los resultados. Con JavaScript, 
+el servidor web envía el código fuente a través de la red y luego los 
+datos de entrada/salida se utilizan localmente en el sistema del cliente.
+Con PHP, se aplica lo contrario: el cliente envía los datos al servidor,
+que realiza el cálculo de forma remota al cliente, y la salida se envía 
+de vuelta al cliente, como se muestra en la Figura 2-9.
 
-Open image in new windowFigure 2-9
+Abrir imagen en una ventana nueva Figura 2-9
 
-Figure 2-9 Defining the programming process
+Figura 2-9 Definición del proceso de programación
 
 
-## The JavaScript/PHP Addition Web Page
+## La página web de adición JavaScript / PHP
 
-In this section, you’ll create two calculators, which for simplicity here only do addition, in the same web page, program.html. The first is a client-side calculator that runs JavaScript, and the second is a server-side calculator that runs PHP. At the Linux terminal, create program.html in the document root of the web server with the following terminal commands:
+En esta sección, creará dos calculadoras, que por simplicidad aquí 
+solo suman, en la misma página web, `program.html`. La primera es una 
+calculadora del lado del cliente que ejecuta JavaScript y la segunda 
+es una calculadora del lado del servidor que ejecuta PHP. En la terminal 
+de Linux, cree `program.html` en la raíz del documento del servidor 
+web con los siguientes comandos de terminal:
+
+```
 $ cd /var/www/html
 $ sudo gedit program.html
+```
 
-In the gedit window, enter the following HTML page that embeds the PHP and JavaScript source code and save the file:
+En la ventana de `gedit`, ingrese la siguiente página HTML que incluye 
+el código fuente PHP y JavaScript y guarde el archivo:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1164,15 +1188,47 @@ document.getElementById("t3").value = z;
 </script>
 </body>
 </html>
+```
 
-The HTML file is used to perform addition in two ways: by using JavaScript and by using PHP. For JavaScript, the fields t1 and t2 are used to fill the operands and t3 is used to output the sum. When the button with the equal sign is clicked, the calculation is performed. This button is assigned function f1() for handling the onclick event . The JavaScript section implements function f1(). This routine sets the JavaScript variable x to the current value of the element t1 (the first textbox) and sets the JavaScript variable y to the current value of the element t2 (the second textbox). The JavaScript function Number() is then used to convert the textbox value to a numeric value. Without using Number() , the value 5 would represent the character 5, and the addition 5+5 would result in 55. Because with JavaScript the calculation is performed locally in the browser, no data is transferred to and from the web server, and therefore when using JavaScript, the URL never changes.
+El archivo HTML se usa para realizar sumas de dos maneras: usando 
+JavaScript y usando PHP. Para JavaScript, los campos `t1` y` t2` se 
+usan para completar los operandos y `t3` se usa para generar la suma. 
+Cuando se hace clic en el botón con el signo igual, se realiza el 
+cálculo. A este botón se le asigna la función `f1()` para manejar el 
+evento `onclick`. La sección de JavaScript implementa la función `f1()`.
+Esta rutina establece la variable JavaScript `x` en el valor actual 
+del elemento `t1` (el primer cuadro de texto) y establece la variable 
+JavaScript y en el valor actual del elemento `t2` (el segundo cuadro 
+de texto). La función de JavaScript `Number()` se utiliza para convertir 
+el valor del cuadro de texto en un valor numérico. Sin el uso de 
+`Number()`, el valor `5` representaría el carácter `5`, y la suma 
+`5 + 5` daría como resultado `55`. Debido a que con JavaScript el 
+cálculo se realiza localmente en el navegador, no se transfieren datos 
+hacia y desde el servidor web, y por lo tanto, cuando se usa JavaScript, 
+la URL nunca cambia.
 
-The second way to do the addition is to use PHP. With PHP the values of textboxes t4 and t5 are transferred to the web server via a form submission when the submit button is clicked. The submit button looks like the equal button from the JavaScript technique, but it functions by sending the data to the web server contrary to the JavaScript button that invokes a function to make the calculation locally. The program that receives the data on the web server is determined by the value of the action attribute of the form. This is set to addition.php, which is a PHP file that should be found in the document root of the web server, as indicated by the relative URL that includes only the file name.
+La segunda forma de hacer la suma es usar PHP. Con PHP, los valores de 
+los cuadros de texto `t4` y `t5` se transfieren al servidor web mediante 
+el envío de un formulario cuando se hace clic en el botón Enviar. El 
+botón enviar se parece al botón igual de la técnica de JavaScript, pero 
+funciona enviando los datos al servidor web al contrario que el botón 
+JavaScript que invoca una función para realizar el cálculo localmente. 
+El programa que recibe los datos en el servidor web está determinado 
+por el valor del atributo `action` del formulario. Se establece en 
+`added.php`, que es un archivo PHP que se debe encontrar en la raíz del 
+documento del servidor web, como lo indica la URL relativa que incluye 
+solo el nombre del archivo.
 
-Create this program with the following command:
+Crear este programa con el siguiente comando:
+
+```
 $ sudo gedit addition.php
+```
 
-In the gedit window, enter the following source code and click the Save button:
+En la ventana de gedit, ingrese el siguiente código fuente y haga clic 
+en el botón Guardar:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1192,29 +1248,59 @@ echo $z;
 ?>
 </body>
 </html>
+```
 
-The PHP file addition.php includes a PHP block where the value sent by textbox t4 is retrieved from the $_GET[] global PHP array, and it is assigned then to the PHP variable $x. Similarly, the value sent by textbox t5 is stored in the PHP variable $y. Next, $x and $y are added together, and the result is assigned to the variable $z. The value of $z is printed with the echo command to the web page sent back to the browser.
+El archivo PHP `added.php` incluye un bloque PHP donde el valor enviado 
+por el cuadro de texto `t4` se recupera del array PHP global `$_GET[]`, 
+y luego se asigna a la variable PHP `$x`. De manera similar, el valor 
+enviado por el cuadro de texto `t5` se almacena en la variable PHP `$y`. 
+A continuación, se suman `$x` y `$y`, y el resultado se asigna a la 
+variable `$z`. El valor `$z` se imprime con el comando echo en la página 
+web que se envía al navegador.
 
-To try the calculators, enter the following URL in your browser’s address bar:
+Para probar las calculadoras, ingrese la siguiente URL en la barra de 
+direcciones de su navegador:
+
+```
 localhost/program.html
+```
 
-On the web page you can test the JavaScript code first. In the example in Figure 2-10, the result of adding 6 and 9 appears when the first equal sign button is clicked.
-Open image in new windowFigure 2-10
-Figure 2-10
+En la página web, primero puede probar el código JavaScript. En el 
+ejemplo de la Figura 2-10, el resultado de sumar 6 y 9 aparece cuando 
+se hace clic en el primer botón de signo igual.
 
-Performing the addition locally with the JavaScript calculator
-Test the PHP addition next. Enter two numbers in the PHP fields. In the example in Figure 2-9, the numbers 8 and 12 were entered. Click the button with the equal sign, which is an HTML form submit button. The evaluated source code of the action file, addition.php , appears, as shown in Figure 2-11.
-Open image in new windowFigure 2-11
-Figure 2-11
+Abrir imagen en una ventana nueva Figura 2-10
 
-The result of the PHP addition as returned from the web server
+Figura 2-10 Realización de la suma localmente con la calculadora 
+JavaScript
 
-In the case of JavaScript, the source code is executed locally on the same computer, and the web page remains the same. For the PHP code, the code is executed in the web server, and the reply is submitted to the client with a new page. In the previous example, it may look like an unfair comparison because PHP provides the result in a web page that is not consistent with the initial one. With the next versions of the files program.html and addition.php, this can be fixed.
+Pruebe la adición de PHP a continuación. Ingrese dos números en los 
+campos de PHP. En el ejemplo de la Figura 2-9, se ingresaron los números 
+8 y 12. Haga clic en el botón con el signo igual, que es un botón de 
+envío de formulario HTML. El código fuente evaluado del archivo 
+`action`, `added.php`, aparece, como se muestra en la Figura 2-11.
+
+Abrir imagen en una ventana nueva Figura 2-11
+
+Figura 2-11 El resultado de la adición de PHP, devuelto por el 
+servidor web
+
+En el caso de JavaScript, el código fuente se ejecuta localmente en 
+la misma computadora y la página web sigue siendo la misma. Para el 
+código PHP, el código se ejecuta en el servidor web y la respuesta se 
+envía al cliente con una nueva página. En el ejemplo anterior, puede 
+parecer una comparación injusta porque PHP proporciona el resultado en 
+una página web que no es consistente con la inicial. Con las próximas 
+versiones de los archivos `program.html` y `added.php`, esto se puede 
+solucionar.
 
 
-### The Second Version of the JavaScript/PHP Addition Web Page
+### Segunda versión de la página web de adición JavaScript/PHP
 
-Create a file called program2.html with gedit or any other text editor. Enter the following source code in program2.html:
+Cree un archivo llamado `program2.html` con gedit o cualquier otro 
+editor de texto. Ingrese el siguiente código fuente en `program2.html`:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1279,14 +1365,32 @@ document.getElementById("t3").value = z;
 </script>
 </body>
 </html>
+```
 
-The HTML file program2.html differs from program.html because of the value of the action attribute of the form element. Instead of addition.php, the program addition2.php is used. But there is another difference as well: the first three textboxes, t1, t2, and t3, used for the JavaScript section now use a name attribute, which will be used to transfer their values to the web server when the submit button is clicked. Those values will not be used for any calculation by the PHP web server program, addition2.php, but the values will be submitted to the addition2.php source code to be returned as values in the corresponding textboxes in the evaluated page. Thus, a continuity will be retained with the state of the original page, program2.html.
+El archivo HTML `program2.html` difiere de `program.html` por el valor 
+del atributo `action` del elemento de formulario. En lugar de 
+`added.php`, se utiliza el programa `added2.php`. Pero también hay 
+otra diferencia: los primeros tres cuadros de texto, `t1`, `t2` y `t3`, 
+que se usan para la sección de JavaScript ahora usan un atributo 
+`name`, que se usará para transferir sus valores al servidor web cuando 
+se haga clic en el botón Enviar. Esos valores no serán usados para 
+ningún cálculo por el programa de servidor web PHP, a`dded2.php`, pero 
+los valores serán enviados al código fuente de `added2.php` para ser 
+devueltos como valores en los cuadros de texto correspondientes en la 
+página evaluada. Por lo tanto, se mantendrá una continuidad con el 
+estado de la página original, `program2.html`.
 
-Create a file named addition2.html in the document root of your server with the following commands:
+Crear un archivo llamado `added2.html` en la raíz del documento de su 
+servidor con los siguientes comandos:
+
+```
 $ cd /var/www/html
 $ sudo gedit addition2.php
+```
 
 Enter the following code and save the file:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1370,19 +1474,35 @@ document.getElementById("t3").value = z;
 </script>
 </body>
 </html>
+```
 
-In this new version of the PHP file, the result of the PHP addition appears as the value of a new textbox, named t6, visually simulating the JavaScript calculator. You can test both calculators in this new version. As displayed in Figure 2-12, the fields of the JavaScript calculator reflect the addition previously issued, and in the PHP calculator the operand fields are set for the addition.
-Open image in new windowFigure 2-12
-Figure 2-12
 
-The web page program2.html before submitting the form
-After clicking the submit button, the result appears in the evaluated addition2.php web page. As displayed in Figure 2-13, addition2.php has the same look and feel as the previous web page, program2.html. Moreover, all textbox values from both JavaScript and PHP sections are retained.
-Open image in new windowFigure 2-13
-Figure 2-13
+En esta nueva versión del archivo PHP, el resultado de la adición de 
+PHP aparece como el valor de un nuevo cuadro de texto, llamado `t6`, 
+que simula visualmente la calculadora JavaScript. Puede probar ambas 
+calculadoras en esta nueva versión. Como se muestra en la Figura 2-12, 
+los campos de la calculadora de JavaScript reflejan la adición emitida 
+previamente, y en la calculadora de PHP los campos de operandos se 
+establecen para la suma.
 
-The evaluated web page addition2.php when the form is submitted
+Abrir imagen en una ventana nueva Figura 2-12
 
-This is achieved with the following PHP block:
+Figura 2-12 La página web `program2.html` antes de enviar el formulario
+
+Después de hacer clic en el botón enviar, el resultado aparece en la 
+página web de `add2.php` evaluada. Como se muestra en la Figura 2-13, 
+`added2.php` tiene la misma apariencia que la página web anterior, 
+`program2.html`. Además, se conservan todos los valores de cuadro de 
+texto de las secciones de JavaScript y PHP.
+
+Abrir imagen en una ventana nueva Figura 2-13
+
+Figura 2-13 La página web evaluada `added2.php` cuando se envía el 
+formulario
+
+Esto se logra con el siguiente bloque PHP:
+
+```
 <?php
 if (isset($_GET["t1"])){
 $t1 = $_GET["t1"];
@@ -1403,6 +1523,7 @@ if (isset($t4) && isset($t5)){
 $t6 = $t4 + $t5;
 }
 ?>
+```
 
 In the previous PHP block, the values of the JavaScript textboxes, t1, t2, and t3, are submitted along with two of the values of the PHP section, t4 and t5. The value for the result of the PHP section, appearing in t6, is calculated next from the values of t4 and t5. Function isset() is used to check whether a variable is set.
 
