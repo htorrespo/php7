@@ -894,39 +894,71 @@ operador PHP `$` de la siguiente manera:
 ```
 $operator = $_GET["operator"];
 ```
+A continuación, `$operator` ingresa un comando de cambio de PHP que, 
+de acuerdo con el valor del operador `$`, realiza la operación aritmética 
+correspondiente entre `$num1` y `$num2`.
 
-Next, $operator enters a PHP switch command that according to the $operator value performs the corresponding arithmetic operation between $num1 and $num2.
+Para probar la interacción cliente-servidor de este ejemplo, use otra 
+computadora en su LAN e ingrese lo siguiente en la barra de direcciones 
+del navegador:
 
-To test the client-server interaction of this example, use another computer in your LAN and enter the following in the browser’s address bar:
+```
 192.168.1.100/get.html
+```
+192.168.1.100 es en este ejemplo la dirección IP privada de la 
+computadora que aloja su servidor web. Alternativamente, puede probar 
+el ejemplo desde la misma computadora donde reside su servidor web 
+ingresando lo siguiente:
 
-192.168.1.100 is in this example the private IP address of the computer that hosts your web server. Alternatively, you can test the example from the same computer where your web server resides by entering the following:
-127.0.0.1/get.html
+```
+194.0.0.1/get.html
+```
 
-Fill in the fields of the form with numeric values and select an arithmetic operator. Figure 2-5 displays the web page get.html with the values 200 and 100 entered in the number fields and also the multiplication sign selected from the drop-down list. Click the Calculate button to submit the form data to get.php.
-Open image in new windowFigure 2-5
-Figure 2-5
+Complete los campos del formulario con valores numéricos y seleccione 
+un operador aritmético. La Figura 2-5 muestra la página web `get.html` 
+con los valores 200 y 100 ingresados en los campos numéricos y también 
+el signo de multiplicación seleccionado de la lista desplegable. Haga 
+clic en el botón Calcular para enviar los datos del formulario a 
+`get.php`. Abrir imagen en una ventana nueva Figura 2-5
 
-The web page get.html with the form fields completed
-Figure 2-6 displays the web page resulting from the evaluation of get.php, the action program in the web server, that received the data from the get.html form. The PHP code multiplies the two numeric variables $num1 and $num2, and the result is printed with the echo command to the output returned by the web server to the client browser.
-Open image in new windowFigure 2-6
-Figure 2-6
+Figura 2-5 La página web `get.html` con los campos del formulario 
+completados
 
-The evaluated get.php web page as it appears in the user browser
+La Figura 2-6 muestra la página web resultante de la evaluación de 
+`get.php`, el programa `action` en el servidor web, que recibió los 
+datos del formulario `get.html`. El código PHP multiplica las dos 
+variables numéricas `$num1` y `$num2`, y el resultado se imprime con 
+el comando `echo` en la salida devuelta por el servidor web al navegador 
+del cliente. Abrir imagen en una ventana nueva Figura 2-6
 
-The data submitted by the user is appended as the query string in the URL. The query string, for this example, is as follows:
+Figura 2-6 La página web `get.php` evaluada tal como aparece en el 
+navegador del usuario
+
+Los datos enviados por el usuario se agregan como la cadena de consulta 
+(query string) en la URL. La cadena de consulta, para este ejemplo, es 
+la siguiente:
+
+```
 n1=200&operator=multiply&n2=100
-
-This includes the name-value pairs of all form fields submitted to the server and comprises the info received by the PHP program, which is used to fill the $_GET array and provide the PHP program with the user-defined variables .
+```
+Esto incluye los pares nombre-valor de todos los campos de formulario 
+enviados al servidor y comprende la información recibida por el programa 
+PHP, que se utiliza para completar el array `$_GET` y proporcionar al 
+programa PHP las variables definidas por el usuario.
 
 
 ## Setting the PHP Variables with the POST Method
 
 Let’s now try the POST method of the form element, which is another option for submitting data to the web server. Create the file post.html as follows:
+
+```
 $ cd /var/www/html
 $ sudo gedit post.html
+```
 
 Enter the following HTML source code, which differs from the get.html code only by the values of the form attributes method and action:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -950,12 +982,18 @@ font-size:24px;
 </form>
 </body>
 </html>
+```
 
 The method used is therefore POST, and the PHP file post.php is used to handle the user request. Create the file post.php also at the document root as follows:
+
+```
 $ cd /var/www/html
 $ sudo gedit post.php
+```
 
 Enter the following source code and save the file:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -989,12 +1027,19 @@ switch($operator) {
 </p>
 </body>
 </html>
+```
 
 To test the client-server interaction of this example, use another computer in your LAN and in the browser’s address bar enter the following:
+
+```
 192.168.1.100/post.html
+```
 
 Here, 192.168.1.100 is the private IP address of the computer that hosts your web server. Alternatively, you can test the example from the same computer where your web server resides by entering the following:
+
+```
 127.0.0.1/post.html
+```
 
 Provide a numeric value for each of the two fields and choose also an arithmetic operator from the drop-down list. In Figure 2-7, the two form fields of the web page post.html are completed with the numeric values 3000 and 5, respectively, and the division operator is selected from the drop-down list.
 Open image in new windowFigure 2-7
