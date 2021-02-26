@@ -114,19 +114,34 @@ indica que esta ruta es la raíz del documento:
 /var/www/html/
 ```
 
-and indicates that this file is the directory index:
-index.html
+e indica que este archivo es el índice del directorio:
 
-From the Linux terminal, change the current working directory to /var/www/html, as shown here:
+`index.html`
+
+Desde la terminal de Linux, cambie el directorio de trabajo actual a 
+`/var/www/html`, como se muestra aquí:
+
+```
 $ cd /var/www/html
+```
 
-Create a copy of index.html to use your own directory index.
+Cree una copia de `index.html` para usar su propio índice de directorio.
+
+```
 $ sudo cp index.html index_OLD.html
+```
 
-Use a Linux text editor such as gedit to edit the original index.html, as shown here:
+Utilice un editor de texto de Linux como gedit para editar el 
+`index.html` original, como se muestra aquí:
+
+```
 $ sudo gedit index.html
+```
 
-In the gedit window, enter your own HTML source code, for instance:
+En la ventana de gedit, ingrese su propio código fuente HTML, por 
+ejemplo:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -147,16 +162,27 @@ background-color:yellow;
 <p>Hello World!</p>
 </body>
 </html>
+```
 
-Click the Save button in the gedit window. Next enter the loopback IP address in the browser’s address bar. As displayed in Figure 1-3, the Apache server displays your own web page.
-Open image in new windowFigure 1-3
-Figure 1-3
+Haga clic en el botón Guardar en la ventana de gedit. Luego ingrese la 
+dirección IP de loopback en la barra de direcciones del navegador. Como 
+se muestra en la Figura 1-3, el servidor Apache muestra su propia 
+página web.
 
-A customized directory index printing “Hello World!”
+Abrir imagen en una ventana nueva Figura 1-3
 
-To request another web page, for instance index_OLD.html, you can provide the URL for the web page file by including the web page path starting from the document root. For instance, enter one of the following in the address bar of your browser:
+Figura 1-3 Un índice de directorio personalizado que imprime 
+"¡Hola mundo!"
+
+Para solicitar otra página web, por ejemplo `index_OLD.html`, puede 
+proporcionar la URL del archivo de la página web al incluir la ruta de 
+la página web a partir de la raíz del documento. Por ejemplo, ingrese 
+uno de los siguientes en la barra de direcciones de su navegador:
+
+```
 127.0.0.1/index_OLD.html
 localhost/index_OLD.html
+```
 
 Because index_OLD.html is in the document root, the path includes only the file name of the web page. By using this URL, the default web page of Apache for Ubuntu is displayed again, as shown in Figure 1-4.
 Open image in new windowFigure 1-4
