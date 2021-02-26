@@ -1,22 +1,51 @@
 <!-- https://link-springer-com.ezproxy.unal.edu.co/chapter/10.1007/978-1-4842-4463-0_1 -->
 
-# Apache Web Server
+# Servidor web Apache
 
-Most people are familiar with using a web browser. Even when they use a new browser for the first time, they are capable of visiting a web page and navigating to other sites immediately. This is because browsers usually encompass all the same handy functionalities. For example, all browsers include an address bar at the top of the window, a history option, a favorites folder, and some navigation buttons.
+La mayoría de la gente está familiarizada con el uso de un navegador 
+web. Incluso cuando utilizan un navegador nuevo por primera vez, son 
+capaces de visitar una página web y navegar a otros sitios 
+inmediatamente. Esto se debe a que los navegadores suelen incluir las 
+mismas funciones prácticas. Por ejemplo, todos los navegadores incluyen 
+una barra de direcciones en la parte superior de la ventana, una opción 
+de historial, una carpeta de favoritos y algunos botones de navegación.
 
-Web servers, on the other hand, rarely look similar to each other. However, servers do share some common ground. In this book, you’ll be using two different web servers, and you’ll learn about the common features of both as well as the differences. In this chapter, you’ll use the Apache web server, and in Chapter  5 you’ll use another popular web server, Lighttpd.
+Los servidores web, por otro lado, rara vez se parecen entre sí. Sin 
+embargo, los servidores comparten algunos puntos en común. En este 
+libro, utilizará dos servidores web diferentes y conocerá las 
+características comunes de ambos, así como las diferencias. En este 
+capítulo, utilizará el servidor web Apache y en el Capítulo 5 utilizará 
+otro servidor web popular, Lighttpd.
 
-## Getting Started with Apache
+## Empezando con Apache
 
-The Apache web server is one of the most popular web servers today. This is because of how easy the administrative features are to use and because of its flexibility based on its modular design. Apache got its name in 1995 when the Apache Project started. The Apache Project was a collaboration of many programmers, and hence the source code required many patches (software fixes). Through software modules, Apache offers additional functionality that administrators can install. Because of these added components, Apache isn’t by default a huge, monolithic piece of software.
+El servidor web Apache es uno de los servidores web más populares en 
+la actualidad. Esto se debe a la facilidad de uso de las funciones 
+administrativas y a su flexibilidad basada en su diseño modular. 
+Apache obtuvo su nombre en 1995 cuando comenzó el Proyecto Apache. 
+El Proyecto Apache fue una colaboración de muchos programadores y, 
+por lo tanto, el código fuente requirió muchos parches (correcciones 
+de software). Mediante módulos de software, Apache ofrece funciones 
+adicionales que los administradores pueden instalar. Debido a estos 
+componentes agregados, Apache no es por defecto una pieza de software 
+enorme y monolítica.
 
-Apache was one of the first servers to support virtual hosts (vhosts). This notion—also referred as virtual servers on other web servers like Cherokee—denotes the capability of a single web server to run multiple sites simultaneously that are differentiated either by the IP address, by the port number, or by the domain name used in the client request.
-Installing and Testing Apache
+Apache fue uno de los primeros servidores en admitir hosts virtuales 
+(`vhosts`). Esta noción, también conocida como servidores virtuales 
+en otros servidores web como Cherokee, denota la capacidad de un solo 
+servidor web para ejecutar varios sitios simultáneamente que se 
+diferencian por la dirección IP, por el número de puerto o por el 
+nombre de dominio utilizado en el solicitud de cliente.
 
-The Apache program is currently known as apache2, and you can download and install it from the Linux terminal using the following command:
+Instalación y prueba de Apache
 
+El programa Apache se conoce actualmente como apache2, y puede 
+descargarlo e instalarlo desde la terminal de Linux usando el 
+siguiente comando:
 
+```
 $ sudo apt-get install apache2
+```
 
 The apache2 process starts running. Use the ps (process status) command from the Linux terminal to view the apache2 processes.
 $ ps xa | grep apache2
