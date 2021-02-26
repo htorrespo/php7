@@ -47,39 +47,72 @@ siguiente comando:
 $ sudo apt-get install apache2
 ```
 
-The apache2 process starts running. Use the ps (process status) command from the Linux terminal to view the apache2 processes.
+El proceso apache2 comienza a ejecutarse. Utilice el comando `ps` (estado 
+del proceso) del terminal de Linux para ver los procesos de apache2.
+
+```
 $ ps xa | grep apache2
+```
 
-More than one apache2 process is created instantly to be ready to serve further client requests. Figure 1-1 displays the process IDs (PIDs) for the Apache processes returned at this time by the command ps.
-Open image in new windowFigure 1-1
-Figure 1-1
+Más de un proceso apache2 se crea instantáneamente para estar listo 
+para atender más solicitudes de clientes. La Figura 1-1 muestra los 
+ID de proceso (PID) para los procesos de Apache devueltos en este 
+momento por el comando `ps`.
 
-The command ps output lists the apache2 PIDs
+Abrir imagen en una ventana nueva Figura 1-1
 
-The web server is up and running and ready to dispatch the first page. In the address bar of your browser, enter the loopback IP address, which is the IP address your PC owns even if no network card is installed, or its corresponding host name. Here are some examples:
+Figura 1-1 La salida del comando ps enumera los PID de apache2
+
+El servidor web está en funcionamiento y listo para enviar la primera 
+página. En la barra de direcciones de su navegador, ingrese la dirección 
+IP de bucle invertido, que es la dirección IP que posee su PC, incluso 
+si no hay una tarjeta de red instalada, o su nombre de host 
+correspondiente. Aquí hay unos ejemplos:
+
+```
 127.0.0.1
 http://127.0.0.1
 localhost
+```
 
-Apache responds by providing the directory index since no actual web page was specified in the URL.
-Hint!
+Apache responde proporcionando el índice del directorio, ya que no se 
+especificó una página web real en la URL.
 
-A default page set for a specific directory is called the directory index for this directory. Also, the directory index for the document root (i.e., the base directory for a website) is the directory index of the site.
-The directory index contents include a short introduction to the Apache configuration options. Figure 1-2 displays the Apache default page for Ubuntu.
-Open image in new windowFigure 1-2
-Figure 1-2
+¡Pista!
 
-The Apache directory index for Ubuntu
+Un conjunto de páginas predeterminado para un directorio específico se 
+denomina índice de directorio para este directorio. Además, el índice 
+de directorio de la raíz del documento (es decir, el directorio base de 
+un sitio web) es el índice de directorio del sitio.
 
-As the first section’s title states, “It works!” The bad news is that so far it works only for users who use their own PC and are interested in just the Apache configuration. There is good news, though. Following the steps in the book, you can customize your web server with your preferences, and you can make your site available to the whole Internet.
+El contenido del índice de directorio incluye una breve introducción a 
+las opciones de configuración de Apache. La Figura 1-2 muestra la página 
+predeterminada de Apache para Ubuntu.
+
+Abrir imagen en una ventana nueva Figura 1-2
+
+Figura 1-2 El índice del directorio de Apache para Ubuntu
+
+Como dice el título de la primera sección, "¡Funciona!" La mala noticia 
+es que hasta ahora funciona solo para usuarios que usan su propia PC y 
+están interesados solo en la configuración de Apache. Hay buenas 
+noticias. Siguiendo los pasos del libro, puede personalizar su servidor 
+web con sus preferencias y puede hacer que su sitio esté disponible 
+para todo Internet.
 
 ### Adding New Directories and Web Pages
 
-By reading the web page’s content, you can find out the document root and the file name of the directory index. The following text:
-"You should replace this file (located at /var/www/html/index.html)"
+Al leer el contenido de la página web, puede averiguar la raíz del 
+documento y el nombre de archivo del índice del directorio. El 
+siguiente texto:
 
-indicates that this path is the document root:
+"Debería reemplazar este archivo (ubicado en` /var/www/html/index.html`)"
+
+indica que esta ruta es la raíz del documento:
+
+```
 /var/www/html/
+```
 
 and indicates that this file is the directory index:
 index.html
