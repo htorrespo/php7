@@ -184,70 +184,148 @@ uno de los siguientes en la barra de direcciones de su navegador:
 localhost/index_OLD.html
 ```
 
-Because index_OLD.html is in the document root, the path includes only the file name of the web page. By using this URL, the default web page of Apache for Ubuntu is displayed again, as shown in Figure 1-4.
-Open image in new windowFigure 1-4
-Figure 1-4
+Debido a que `index_OLD.html` está en la raíz del documento, la ruta 
+incluye solo el nombre de archivo de la página web. Al usar esta URL, 
+la página web predeterminada de Apache para Ubuntu se muestra nuevamente, 
+como se muestra en la Figura 1-4.
 
-Downloading a specific web page by including its path in the URL
+Abrir imagen en una ventana nueva Figura 1-4
 
-Start including subdirectories in the document root to better organize your web site. At the Linux terminal, change the working directory to the document root.
+Figura 1-4 Descarga de una página web específica incluyendo su ruta en 
+la URL
+
+Comience a incluir subdirectorios en la raíz del documento para 
+organizar mejor su sitio web. En la terminal de Linux, cambie el 
+directorio de trabajo a la raíz del documento.
+
+```
 $ cd /var/www/html/
+```
 
-Create a new test directory. In the new directory, create test.html, another HTML file.
+Cree un nuevo directorio de prueba. En el nuevo directorio, cree 
+`test.html`, otro archivo HTML.
+
+```
 $ sudo mkdir test
 $ sudo gedit test/test.html
+```
 
-In the gedit window, enter some HTML source code for test.html and click the Save button. Then enter the file name path of the web page, excluding the document root, in the address bar of your browser. The file name path for test.html is as follows:
+En la ventana de gedit, ingrese algún código fuente HTML para 
+`test.html` y haga clic en el botón Guardar. Luego ingrese la ruta del 
+nombre del archivo de la página web, excluyendo la raíz del documento, 
+en la barra de direcciones de su navegador. La ruta del nombre de 
+archivo para `test.html` es la siguiente:
+
+
+```
 /var/www/html/test/test.html
+```
 
-You can omit the document root part since on the web server any file reference starts from the document root; therefore, the URL of test.html is as follows:
+Puede omitir la parte raíz del documento ya que en el servidor web 
+cualquier referencia de archivo comienza desde la raíz del documento; 
+por lo tanto, la URL de `test.html` es la siguiente:
+
+```
 localhost/test/test.html
 or 127.0.0.1/test/test.html
+```
 
-The web page is loaded in your browser, as displayed in Figure 1-5.
-Open image in new windowFigure 1-5
-Figure 1-5
+La página web se carga en su navegador, como se muestra en la Figura 1-5.
 
-Testing a web page located in the document root subdirectory
+Abrir imagen en una nueva ventana Figura 1-5
 
-### Testing Your Web Site from Another Computer of Your LAN
+Figura 1-5 Prueba de una página web ubicada en el subdirectorio raíz 
+del documento
 
-As another test, you can see whether Apache connects to other computers on the same local area network (LAN) as your PC. A connection between two workstations on the same LAN happens via the Internet layer of the TCP/IP protocol between their private IP addresses. The private IP addresses are valid only internally to the LAN. This is in contrast to public IP addresses that are globally accessible to the whole Internet. Put simply, all workstations in a LAN possess private IP addresses and are represented to the Internet with the public IP address of the LAN router (which also includes a private IP address for internal communication with the LAN workstations).
+### Probar de su sitio web desde otra computadora en su LAN
 
-At the Linux terminal, use the ifconfig command to find out the private IP address of your computer.
+Como otra prueba, puede ver si Apache se conecta a otras computadoras 
+en la misma red de área local (LAN) que su PC. Una conexión entre dos 
+estaciones de trabajo en la misma LAN ocurre a través de la capa de 
+Internet del protocolo TCP / IP entre sus direcciones IP privadas. Las 
+direcciones IP privadas son válidas solo internamente en la LAN. Esto 
+contrasta con las direcciones IP públicas que son globalmente accesibles 
+a todo Internet. En pocas palabras, todas las estaciones de trabajo en 
+una LAN poseen direcciones IP privadas y están representadas en Internet 
+con la dirección IP pública del enrutador LAN (que también incluye una 
+dirección IP privada para la comunicación interna con las estaciones de 
+trabajo LAN).
+
+En la terminal de Linux, use el comando `ifconfig` para averiguar la 
+dirección IP privada de su computadora.
+
+```
 $ ifconfig
+```
 
-You can also use the hostname command.
+También puede utilizar el comando `hostname`.
+
+```
 $ hostname -I
+```
 
-The private IP address of my computer used at the given time was 192.168.1.5, as shown in Figure 1-6.
-Open image in new windowFigure 1-6
-Figure 1-6
+La dirección IP privada de mi computadora utilizada en ese momento era 
+192.168.1.5, como se muestra en la Figura 1-6.
 
-ifconfig returning the private IP address
-Use the private IP address returned by ifconfig in the address bar of the local browser. The web page loads just like previously (with the loopback address), as shown in Figure 1-7.
-Open image in new windowFigure 1-7
-Figure 1-7
+Abrir imagen en una ventana nueva Figura 1-6
 
-Testing the web server using a private IP address
-Next try the same IP address from another computer of your LAN. Figure 1-8 displays the browser used on a Windows 7 system in the same LAN.
-Open image in new windowFigure 1-8
-Figure 1-8
+Figura 1-6 `ifconfig` devuelve la dirección IP privada
 
-Testing the web server from another PC of your LAN
+Utilice la dirección IP privada devuelta por ifconfig en la barra de 
+direcciones del navegador local. La página web se carga como antes 
+(con la dirección de bucle invertido), como se muestra en la Figura 1-7.
+
+Abrir imagen en una ventana nueva Figura 1-7
+
+Figura 1-7 Prueba del servidor web con una dirección IP privada
+
+A continuación, intente con la misma dirección IP desde otra computadora 
+de su LAN. La Figura 1-8 muestra el navegador utilizado en un sistema 
+Windows 7 en la misma LAN.
+
+Abrir imagen en una ventana nueva Figura 1-8
+
+Figura 1-8 Prueba del servidor web desde otra PC de su LAN
 
 
-## Providing a Static Private IP Address to the Web Server
+## Proporcionar una dirección IP privada estática al servidor web
 
-The next step for the web server configuration is to set up a static private IP address. This is a private IP address that remains the same each time the computer that hosts your web server restarts. This step is optional to test your server from your LAN, but it is essential for making the server available to the whole Internet. To provide a static private IP address, the network connection of the computer that hosts the web server has to properly configured.
+El siguiente paso para la configuración del servidor web es configurar 
+una dirección IP privada estática. Esta es una dirección IP privada 
+que permanece igual cada vez que se reinicia la computadora que aloja 
+su servidor web. Este paso es opcional para probar su servidor desde 
+su LAN, pero es esencial para que el servidor esté disponible para 
+toda Internet. Para proporcionar una dirección IP privada estática, la 
+conexión de red de la computadora que aloja el servidor web debe 
+configurarse correctamente.
 
-The most straightforward configuration for a workstation in a LAN is to obtain its IP address with the Dynamic Host Configuration Protocol (DHCP). When a PC is configured with the DHCP option, on startup it is assigned by the router with an IP address, a network mask, the IP address of the default gateway (the router itself), and the DNS server used for performing the translations between domain names and IP addresses. The drawback with DHCP is that your PC gets the next available IP address from an IP address pool, which may be a different address from the one obtained the previous time (a dynamic address).
-Your other option is to use a static private IP address. Each time you start your PC, its IP address remains the same. A static IP address is mandatory for a server required to be available for connections across the Internet. To implement a static IP address, you have to configure manually the information previously retrieved by DHCP. Run first the route command from your terminal to find the default gateway (the router) in your LAN, as shown in Figure 1-9.
+La configuración más sencilla para una estación de trabajo en una LAN 
+es obtener su dirección IP con el Protocolo de configuración dinámica 
+de host (DHCP). Cuando una PC está configurada con la opción DHCP, al 
+inicio, el enrutador le asigna una dirección IP, una máscara de red, 
+la dirección IP de la puerta de enlace predeterminada (el enrutador 
+mismo) y el servidor DNS utilizado para realizar las traducciones entre 
+nombres de dominio y direcciones IP. El inconveniente de DHCP es que su 
+PC obtiene la siguiente dirección IP disponible de un grupo de direcciones 
+IP, que puede ser una dirección diferente a la obtenida la vez anterior 
+(una dirección dinámica).
+
+Su otra opción es utilizar una dirección IP privada estática. Cada vez 
+que inicia su PC, su dirección IP sigue siendo la misma. Una dirección 
+IP estática es obligatoria para que un servidor esté disponible para 
+conexiones a través de Internet. Para implementar una dirección IP 
+estática, debe configurar manualmente la información previamente 
+recuperada por DHCP. Ejecute primero el comando route desde su terminal 
+para encontrar la puerta de enlace predeterminada (el enrutador) en su 
+LAN, como se muestra en la Figura 1-9.
+
+```
 $ route –n
-Open image in new windowFigure 1-9
-Figure 1-9
+```
 
-The route command returns the default gateway IP address
+Open image in new windowFigure 1-9
+
+Figure 1-9 The route command returns the default gateway IP address
 
 The IP address for the gateway (the router) is therefore 192.168.1.1.
 
