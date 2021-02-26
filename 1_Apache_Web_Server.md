@@ -323,45 +323,96 @@ LAN, como se muestra en la Figura 1-9.
 $ route –n
 ```
 
-Open image in new windowFigure 1-9
+Abrir imagen en una ventana nueva Figura 1-9
 
-Figure 1-9 The route command returns the default gateway IP address
+Figura 1-9 El comando route devuelve la dirección IP de la puerta de 
+enlace predeterminada
 
-The IP address for the gateway (the router) is therefore 192.168.1.1.
+La dirección IP de la puerta de enlace (el enrutador) es por lo tanto 
+192.168.1.1.
 
-Run ifconfig again to gather information about the current IP address and the mask.
+Ejecute `ifconfig` nuevamente para recopilar información sobre la 
+dirección IP actual y la máscara.
 
-As you saw in Figure 1-6 earlier in the chapter, the IP address for the web server is currently 192.168.1.5 with a netmask of 255.255.255.0. The nonzero part of the netmask describes the part of the IP address that corresponds to the network, while the zero describes the part that corresponds to the computer in that network. By logical ANDing the IP address and its netmask, you get the network address.
+Como vio en la Figura 1-6 anteriormente en este capítulo, la dirección 
+IP del servidor web es actualmente 192.168.1.5 con una máscara de red 
+de 255.255.255.0. La parte distinta de cero de la máscara de red 
+describe la parte de la dirección IP que corresponde a la red, mientras 
+que el cero describe la parte que corresponde a la computadora en esa 
+red. Al aplicar un AND lógico a la dirección IP y su máscara de red, 
+se obtiene la dirección de red.
 
-The LAN in this example therefore has the IP address 192.168.1.0. This leaves the last byte to represent the computer in the network. This is therefore the byte that you will change to choose the static IP address for the web server. You can select any unused value from 1 to 254. For instance, for the value 100, you get the IP address 192.168.1.100.
-With the information collected, click the Wired Network icon on your desktop and then click Next. Alternatively, select System Settings ➤ Network ➤ Wired or Settings ➤ Preferences ➤ Network Connections depending on your Ubuntu version. In the Network Connections window that appears, as shown in Figure 1-10, double-click “Wired connection 1” (or the option with a similar name in the Ethernet list).
-Open image in new windowFigure 1-10
-Figure 1-10
+Por lo tanto, la LAN en este ejemplo tiene la dirección IP 
+192.168.1.0. Esto deja el último byte para representar la computadora 
+en la red. Por lo tanto, este es el byte que cambiará para elegir la 
+dirección IP estática para el servidor web. Puede seleccionar cualquier 
+valor no utilizado de 1 a 254. Por ejemplo, para el valor 100, obtiene 
+la dirección IP 192.168.1.100.
 
-The Network Connections window
-The “Editing Wired connection 1” window that appears next provides the IPv4 Settings and IPv6 Settings tabs for configuring IPv4 and IPv6 addresses, respectively (Figure 1-11).
-Open image in new windowFigure 1-11
-Figure 1-11
+Con la información recopilada, haga clic en el icono Red cableada en su 
+escritorio y luego haga clic en Siguiente. Alternativamente, seleccione 
+Configuración del sistema ➤ Red ➤ Cableado o Configuración 
+➤ Preferencias ➤ Conexiones de red según su versión de Ubuntu. En la 
+ventana Conexiones de red que aparece, como se muestra en la Figura 
+1-10, haga doble clic en “Conexión cableada 1” (o la opción con un 
+nombre similar en la lista de Ethernet).
 
-The “Editing Wired connection 1” window
-On the IPv4 Settings tab, the method currently selected is Automatic (DHCP). Deselect this option and select instead Manual from the Method list (Figure 1-12).
-Open image in new windowFigure 1-12
-Figure 1-12
+Abrir imagen en una ventana nueva Figura 1-10
 
-Applying the Manual method for configuring the IPv4 settings
+Figura 1-10 La ventana Conexiones de red
 
-Click the Add button to complete the required fields for manually setting the connection parameters. Under Address, enter your preferred IP address. For the given LAN with the IP address 192.168.1.0, you could enter, for instance, 192.168.1.100 as the new static IP address for the web server. Enter also the value for the netmask, 255.255.255.0, for the Netmask option, and enter the IP address of the router, 192.168.1.1 in this example, for the Gateway option. You need also to provide the IP address (or addresses) for a DNS server in the “DNS servers” field. If you enter more than one IP address, separate them using commas. For the DNS server, you can use the IP address of the DNS server suggested by your Internet service provider (ISP) or use the IP address of a freely available DNS server like Google’s 8.8.8.8.
+La ventana "Editar conexión cableada 1" que aparece a continuación 
+proporciona las pestañas Configuración de IPv4 y Configuración de IPv6 
+para configurar direcciones IPv4 e IPv6, respectivamente (Figura 1-11).
 
-Click the Save button to confirm the new settings. To activate the new IP address, click the Network Manager icon and select Disconnect; then click again and select “Wired connection 1” or enter the following at the Linux terminal:
+Abrir imagen en una ventana nueva Figura 1-11
+
+Figura 1-11 La ventana "Editar conexión cableada 1"
+
+En la pestaña Configuración de IPv4, el método seleccionado actualmente 
+es Automático (DHCP). Anule la selección de esta opción y seleccione 
+Manual en la lista de métodos (Figura 1-12).
+
+Abrir imagen en una ventana nueva Figura 1-12
+
+Figura 1-12 Aplicación del método manual para configurar los ajustes 
+de IPv4
+
+Haga clic en el botón Agregar para completar los campos obligatorios 
+para configurar manualmente los parámetros de conexión. En Dirección, 
+ingrese su dirección IP preferida. Para la LAN dada con la dirección IP 
+192.168.1.0, puede ingresar, por ejemplo, 192.168.1.100 como la nueva 
+dirección IP estática para el servidor web. Ingrese también el valor de 
+la máscara de red, 255.255.255.0, para la opción Máscara de red, e 
+ingrese la dirección IP del enrutador, 192.168.1.1 en este ejemplo, 
+para la opción Puerta de enlace. También debe proporcionar la dirección 
+(o direcciones) IP de un servidor DNS en el campo "Servidores DNS". Si 
+ingresa más de una dirección IP, sepárelas con comas. Para el servidor 
+DNS, puede usar la dirección IP del servidor DNS sugerida por su 
+proveedor de servicios de Internet (ISP) o usar la dirección IP de un 
+servidor DNS disponible gratuitamente como el 8.8.8.8 de Google.
+
+Haga clic en el botón Guardar para confirmar la nueva configuración. 
+Para activar la nueva dirección IP, haga clic en el icono de Network 
+Manager y seleccione Desconectar; luego haga clic nuevamente y 
+seleccione "Conexión cableada 1" o ingrese lo siguiente en la terminal 
+de Linux:
+
+```
 $ sudo service network-manager restart
+```
 
-You can try now the static IP address of your web server by entering it in the address bar of a browser and running it from another PC in your LAN, as indicated in Figure 1-13.
-Open image in new windowFigure 1-13
-Figure 1-13
+Puede probar ahora la dirección IP estática de su servidor web 
+ingresándola en la barra de direcciones de un navegador y ejecutándola 
+desde otra PC en su LAN, como se indica en la Figura 1-13.
 
-Testing the web server by using its static IP address
+Abrir imagen en una ventana nueva Figura 1-13
 
-In the following section, you can configure your Linux firewall to block connections for all port numbers except the ones set by you.
+Figura 1-13 Prueba del servidor web utilizando su dirección IP estática
+
+En la siguiente sección, puede configurar su firewall de Linux para 
+bloquear las conexiones para todos los números de puerto, excepto los 
+establecidos por usted.
 
 ## Using the Linux Firewall
 
