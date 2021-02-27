@@ -416,42 +416,74 @@ establecidos por usted.
 
 ## Using the Linux Firewall
 
-You should be able to view your web page on another PC in your LAN without a problem. However, if a firewall is enabled in your system, you will get the error message “This site can’t be reached” or a similar one in your browser. (A firewall is an application that checks the connections to your system and permits or bans them according to the rules that you set.)
+Debería poder ver su página web en otra PC en su LAN sin problemas. 
+Sin embargo, si un firewall está habilitado en su sistema, recibirá 
+el mensaje de error "No se puede acceder a este sitio" o uno similar 
+en su navegador. (Un firewall es una aplicación que verifica las 
+conexiones a su sistema y las permite o prohíbe según las reglas que 
+usted establezca).
 
-In the system I used in the previous section, the pre-installed Ubuntu Linux firewall (ufw) was disabled by default. To disable it, you can use this command:
+En el sistema que usé en la sección anterior, el firewall de Ubuntu 
+Linux preinstalado (ufw) estaba deshabilitado de forma predeterminada. 
+Para deshabilitarlo, puede usar este comando:
+
+```
 $ sudo ufw disable
+```
 
-Now try to connect and see if you get the error message. You can then restore it using the following command:
+Ahora intente conectarse y vea si recibe el mensaje de error. Luego 
+puede restaurarlo usando el siguiente comando:
+
+```
 $ sudo ufw enable
+```
 
-To allow the Apache server to receive connections while a firewall is on, you can specify the appropriate rules. Apache, trying to make your work easy, has already set the basic rules for you when it was installed on your system. At the command line, enter the following:
+Para permitir que el servidor Apache reciba conexiones mientras hay un 
+firewall activado, puede especificar las reglas apropiadas. Apache, 
+tratando de facilitar su trabajo, ya estableció las reglas básicas para 
+usted cuando se instaló en su sistema. En la línea de comando, ingrese 
+lo siguiente:
+
+```
 $ sudo ufw app list
+```
 
-The command’s output includes the ufw profiles for Apache shown in Figure 1-14.
-Open image in new windowFigure 1-14
-Figure 1-14
+La salida del comando incluye los perfiles de ufw para Apache que 
+se muestran en la Figura 1-14.
 
-Listing the ufw profiles
+Abrir imagen en una ventana nueva Figura 1-14
 
-    Profile Apache is for the default HTTP port 80.
+Figura 1-14 Listado de perfiles ufw
 
-    Profile Apache Full is for both ports80 and 443.
+- Profile Apache es para el puerto HTTP 80 predeterminado.
 
-    Profile Apache Secure is for the default HTTPS port 443.
+- Profile Apache Full es para los puertos 80 y 443.
 
-To allow incoming traffic for the Apache Full profile, enter the following at the Linux terminal :
+- Perfil Apache Secure es para el puerto HTTPS 443 predeterminado.
+
+Para permitir el tráfico entrante para el perfil Apache Full, ingrese 
+lo siguiente en la terminal de Linux:
+
+```
 $ sudo ufw allow 'Apache Full'
+```
 
-To verify this, enter the following:
+Para verificar esto, ingrese lo siguiente:
+
+```
 $ sudo ufw status
+```
 
-The command’s output is shown in Figure 1-15.
-Open image in new windowFigure 1-15
-Figure 1-15
+La salida del comando se muestra en la Figura 1-15.
 
-Displaying the status of the ufw firewall with the Apache Full profile set
+Abrir imagen en una ventana nueva Figura 1-15
 
-An even better way to verify this is to connect to the Apache web server from another PC in your LAN . The web page should load as usual.
+Figura 1-15 Visualización del estado del firewall ufw con el conjunto 
+de perfiles Apache Full
+
+Una forma aún mejor de verificar esto es conectarse al servidor web 
+Apache desde otra PC en su LAN. La página web debería cargarse como de 
+costumbre.
 
 ## Managing the Apache Process
 
