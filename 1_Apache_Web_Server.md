@@ -651,7 +651,9 @@ es el siguiente:
       # The ServerName directive sets the request scheme, hostname and port that
       # the server uses to identify itself. This is used when creating
       # redirection URLs. In the context of virtual hosts, the ServerName
-      # specifies what hostname must appear in the request's Host: header to match this virtual host. For the default virtual host (this file) this value is not decisive as it is used as a last resort host regardless.
+      # specifies what hostname must appear in the request's Host: header to 
+      match this virtual host. For the default virtual host (this file) this 
+      value is not decisive as it is used as a last resort host regardless.
       # However, you must set it for any further virtual host explicitly.
       #ServerName www.example.com
       ServerAdmin webmaster@localhost
@@ -672,32 +674,68 @@ es el siguiente:
 </VirtualHost>
 ```
 
-# vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+# vim: sintaxis=apache ts=4 sw=4 sts=4 sr noet
 
-Each Apache configuration file includes three kinds of entries.
+Cada archivo de configuración de Apache incluye tres tipos de entradas.
 
-    Directives that define the behavior of the web server
+- Directivas que definen el comportamiento del servidor web
 
-    Containers, such as VirtualHost, that define blocks of directives for a vhost
+-Contenedores, como `VirtualHos`t, que definen bloques de directivas 
+para un `vhost`
 
-    Comments, starting with a hash (#), that provide some aid in the usage of the directives
+- Comentarios, comenzando con un hash (`#`), que brindan alguna ayuda 
+en el uso de las directivas
 
-Container <VirtualHost *:80> pairs with </VirtualHost> just like an HTML start and end tag. The VirtualHost pair encloses all directives for the specific vhost and also defines the IP address and port number to which the given vhost should respond. In this configuration file, the asterisk (*) corresponds to any IP address, and 80 corresponds to port 80, which is the default port for the HTTP protocol. You already tested this configuration in the previous sections when one of the following IP addresses was used in the address bar of your browser to download the directory index:
+El contenedor `<VirtualHost*:80>` se empareja con `</VirtualHost>` como 
+una etiqueta HTML de inicio y finalización. El par `VirtualHost` incluye 
+todas las directivas para el `vhost` específico y también define la 
+dirección IP y el número de puerto al que el `vhost` dado debe responder. 
+En este archivo de configuración, el asterisco (`*`) corresponde a cualquier 
+dirección IP y 80 corresponde al puerto 80, que es el puerto 
+predeterminado para el protocolo HTTP. Ya probó esta configuración en 
+las secciones anteriores cuando se usó una de las siguientes direcciones 
+IP en la barra de direcciones de su navegador para descargar el índice 
+del directorio:
+
+```
 127.0.0.1
 192.168.1.100
+```
 
-Both addresses succeeded because the configuration accepted any valid IP address for this server. In the following section, you will create two different vhosts, each one serving a different IP address.
+Ambas direcciones tuvieron éxito porque la configuración aceptó 
+cualquier dirección IP válida para este servidor. En la siguiente 
+sección, creará dos `vhosts` diferentes, cada uno con una dirección 
+IP diferente.
 
 
-### Using IP-Based Virtual Hosts
+### Uso de hosts virtuales basados en IP
 
-In this section, you’ll create a new configuration file with gedit to implement two IP-based vhosts using the directives contained between the start/end VirtualHost containers . One vhost will be responsible for the loopback IP address, 127.0.0.1, and the other will be responsible for the private IP address of the web server, 192.168.1.100, both listening on port 80. The pair of IP address and port number for each vhost is indicated in the VirtualHost container. For instance, <VirtualHost 127.0.0.1:80> indicates the loopback IP address 127.0.0.1, and 80 is the default port number for the HTTP protocol. You can provide a different directory index to each vhost, such as index1.html for the first and index2.html for the second, using the DirectoryIndex directive . You can leave the other directives with their default values from the 000-default.conf file.
+En esta sección, creará un nuevo archivo de configuración con gedit 
+para implementar dos `vhosts` basados en IP utilizando las directivas 
+contenidas entre los contenedores de `start/end` de `VirtualHost`. Un 
+`vhost` será responsable de la dirección IP de `loopback`, `127.0.0.1`, 
+y el otro será responsable de la dirección IP privada del servidor web, 
+`192.168.1.100`, ambos escuchando en el puerto `80`. El par de dirección 
+IP y número de puerto para cada `vhost` se indica en el contenedor 
+`VirtualHost`. Por ejemplo, `<VirtualHost 127.0.0.1:80>` indica la 
+dirección IP de loopback 127.0.0.1 y 80 es el número de puerto 
+predeterminado para el protocolo HTTP. Puede proporcionar un índice de 
+directorio diferente para cada `vhost`, como `index1.html` para el 
+primero e `index2.html` para el segundo, utilizando la directiva 
+`DirectoryIndex`. Puede dejar las otras directivas con sus valores 
+predeterminados del archivo `000-default.conf`.
 
-At the Linux terminal, change the working directory to sites-available and use gedit to create the file example1.conf.
+En la terminal de Linux, cambie el directorio de trabajo a 
+`sites-available` y use gedit para crear el archivo `example1.conf`.
+
+```
 $ cd /etc/apache2/sites-available
 $ sudo gedit example1.conf
+```
 
-Enter the following configuration rules and save the file:
+Ingrese las siguientes reglas de configuración y guarde el archivo:
+
+```
 # 1st vhost
 <VirtualHost 127.0.0.1:80>
       ServerAdmin webmaster@localhost
@@ -714,21 +752,41 @@ Enter the following configuration rules and save the file:
       ErrorLog ${APACHE_LOG_DIR}/error.log
       CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
+```
 
-Next you need to enable the new configuration using the a2ensite (apache2 enable site) command. At the Linux terminal, enter the following:
+
+A continuación, debe habilitar la nueva configuración mediante el 
+comando `a2ensite` (apache2 enable site). En la terminal de Linux, 
+ingrese lo siguiente:
+
+```
 $ sudo a2ensite example1.conf
+```
 
-Or simply enter this:
+O simplemente ingrese esto:
+
+```
 $ sudo a2ensite example1
+```
+Para habilitar la nueva configuración de Apache, también necesita 
+volver a cargar el servidor web.
 
-To enable the new Apache configuration, you need also to reload the web server.
+```
 $ sudo service apache2 force-reload
+```
 
-Create two web pages in the document root directory that will serve as the directory indexes for the two vhosts.
+Cree dos páginas web en el directorio raíz del documento que servirán 
+como índices de directorio para los dos `vhosts`.
+
+```
 $ cd /var/www/html
 $ sudo gedit index1.html
+```
 
-Enter the following HTML source code:
+
+Ingrese el siguiente código fuente HTML:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -747,8 +805,13 @@ Enter the following HTML source code:
 <p>Hello from 127.0.0.1</p>
 </body>
 </html>
+```
 
-In /var/www/html, create a web page called index2.html to be used as the directory index for the second vhost. Use the following HTML source code:
+En `/var/www/html`, cree una página web llamada `index2.html` para 
+utilizarla como índice de directorio para el segundo `vhost`. Utilice
+ el siguiente código fuente HTML:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -767,25 +830,40 @@ In /var/www/html, create a web page called index2.html to be used as the directo
 <p>Hello from 192.168.1.100</p>
 </body>
 </html>
+```
 
-Open two tabs in your browser. On the first, enter the following address in the address bar:
+Abra dos pestañas en su navegador. En el primero, ingrese la 
+siguiente dirección en la barra de direcciones:Abra dos pestañas en su navegador. En el primero, ingrese la 
+siguiente dirección en la barra de direcciones:
+
+```
 127.0.0.1
+```
 
-On the second tab, enter the following address in the address bar:
+En la segunda pestaña, ingrese la siguiente dirección en la barra 
+de direcciones:
+
+```
 192.168.1.100
+```
 
-With the current configuration, Apache displays different content for each request. The first request, with the IP address 127.0.0.1, resolves to index1.html (Figure 1-18).
-Open image in new windowFigure 1-18
-Figure 1-18
+Con la configuración actual, Apache muestra contenido diferente para 
+cada solicitud. La primera solicitud, con la dirección IP 127.0.0.1, 
+se resuelve en `index1.html` (Figura 1-18).
 
-Testing the first IP-based vhost
-The second request with IP address 192.168.1.100 resolves to index2.html (Figure 1-19).
-Open image in new windowFigure 1-19
-Figure 1-19
+Abrir imagen en una ventana nueva Figura 1-18
 
-Testing the second IP-based vhost
+Figura 1-18 Prueba del primer `vhost` basado en IP
 
-Next you’ll look at a similar example, this time using port-based virtual hosts.
+La segunda solicitud con la dirección IP 192.168.1.100 se resuelve 
+en `index2.html` (Figura 1-19).
+
+Abrir imagen en una ventana nueva Figura 1-19
+
+Figura 1-19 Prueba del segundo `vhost` basado en IP
+
+A continuación, verá un ejemplo similar, esta vez utilizando hosts 
+virtuales basados en puertos.
 
 
 ### Using Port-Based Virtual Hosts
