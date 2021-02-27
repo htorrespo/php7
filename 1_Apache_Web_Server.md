@@ -487,53 +487,127 @@ costumbre.
 
 ## Managing the Apache Process
 
-To apply new configuration rules while Apache runs and also to start and stop the Apache process (required, for instance, when you want to try other web servers), you need to run a few commands from the Linux terminal.
+Para aplicar nuevas reglas de configuración mientras se ejecuta Apache 
+y también para iniciar y detener el proceso de Apache (requerido, por 
+ejemplo, cuando desea probar otros servidores web), debe ejecutar 
+algunos comandos desde la terminal de Linux.
 
-To stop your web server, enter the following at the command line:
+Para detener su servidor web, ingrese lo siguiente en la línea de 
+comando:
+
+```
 $ sudo systemctl stop apache2
-Or use:
+```
+
+O usar:
+
+```
 $ sudo service apache2 stop
+```
 
-To start the Apache web server when it is already stopped, enter the following:
+Para iniciar el servidor web Apache cuando ya está detenido, ingrese 
+lo siguiente:
+
+```
 $sudo systemctl start apache2
-Or use:
+```
+
+O usar:
+
+```
 $ sudo service apache2 start
+```
 
-Do the following experiment to implement the previous commands. First run the following to view the apache2 processes:
+Realice el siguiente experimento para implementar los comandos anteriores. 
+Primero ejecute lo siguiente para ver los procesos de apache2:
+
+```
 $ ps xa | grep apache2
+```
 
-Then use the systemctl stop command and run the ps command again. You’ll find that the apache2 processes have been “killed.” You can also try a request from your browser. You’ll find that the message “The site can’t be reached” appears, as viewed in Figure 1-16.
-Open image in new windowFigure 1-16
-Figure 1-16
+Luego use el comando `systemctl stop` y ejecute el comando `ps` 
+nuevamente. Verá que los procesos de `apache2` han sido "eliminados". 
+También puede probar una solicitud desde su navegador. Verá que 
+aparece el mensaje "No se puede acceder al sitio", como se ve en 
+la Figura 1-16.
 
-Trying to download a web page with the Apache server stopped
+Abrir imagen en una ventana nueva Figura 1-16
 
-Use the systemctl start command to restore the Apache server.
-Figure 1-17 shows the previous commands.
-Open image in new windowFigure 1-17
-Figure 1-17
+Figura 1-16 Intentando descargar una página web con el servidor 
+Apache detenido
 
-Displaying the Apache PIDs when the server runs and the absence of Apache PIDs when the server stops
+Utilice el comando systemctl start para restaurar el servidor 
+Apache.
 
-To stop and then start the Apache server again, enter the following:
+La Figura 1-17 muestra los comandos anteriores.
+
+Abrir imagen en una ventana nueva Figura 1-17
+
+Figura 1-17 Visualización de Apache PID cuando el servidor se 
+ejecuta y la ausencia de Apache PID cuando el servidor se detiene
+
+Para detener y luego iniciar el servidor Apache nuevamente, ingrese 
+lo siguiente: Luego use el comando systemctl stop y ejecute el comando 
+`ps` nuevamente. Verá que los procesos de `apache2` han sido 
+"eliminados". También puede probar una solicitud desde su navegador. 
+Verá que aparece el mensaje "No se puede acceder al sitio", como se ve 
+en la Figura 1-16.
+
+Abrir imagen en una ventana nueva Figura 1-16
+
+Figura 1-16 Intentando descargar una página web con el servidor 
+Apache detenido
+
+Utilice el comando `systemctl start` para restaurar el servidor 
+Apache.
+
+La Figura 1-17 muestra los comandos anteriores.
+
+Abrir imagen en una ventana nueva Figura 1-17
+
+Figura 1-17 Visualización de Apache PID cuando el servidor se ejecuta 
+y la ausencia de Apache PID cuando el servidor se detiene
+
+Para detener y luego iniciar el servidor Apache nuevamente, ingrese 
+lo siguiente:
+
+```
 $ sudo systemctl restart apache2
+```
 
-To reload Apache (that is, to retain the process running and just update the configuration), enter the following:
+Para recargar Apache (es decir, para mantener el proceso en ejecución 
+y simplemente actualizar la configuración), ingrese lo siguiente:
+
+```
 $ sudo systemctl reload apache2
+```
 
-or you can enter the following:
+o puede ingresar lo siguiente:
+
+```
 $ sudo service apache2 force-reload
-which is equal to the the following:
+```
+
+que es igual a lo siguiente:
+
+```
 $ sudo service apache2 reload
+```
 
-The Apache server starts by default when the system boots. To disable that configuration, enter the following:
+El servidor Apache se inicia de forma predeterminada cuando se inicia 
+el sistema. Para deshabilitar esa configuración, ingrese lo siguiente:
+
+```
 $ sudo systemctl disable apache2
+```
+Para que Apache se inicie al iniciar el sistema, ingrese lo siguiente:
 
-To make Apache start on system boot, enter the following:
+```
 $ sudo systemctl enable apache2
-
+```
 
 ## Working with Virtual Hosts
+
 Virtual hosts (vhosts) or virtual servers enable a web server to host multiple sites simultaneously. Vhosts fall into one of the following categories:
 
     IP-based virtual hosts, where each vhost is dedicated to a site that makes use of a specific IP address from the web server IP addresses
