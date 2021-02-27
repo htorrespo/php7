@@ -608,23 +608,45 @@ $ sudo systemctl enable apache2
 
 ## Working with Virtual Hosts
 
-Virtual hosts (vhosts) or virtual servers enable a web server to host multiple sites simultaneously. Vhosts fall into one of the following categories:
+Los hosts virtuales (`vhosts`) o los servidores virtuales permiten que 
+un servidor web albergue varios sitios simultáneamente. Los `vhosts` 
+pertenecen a una de las siguientes categorías:
 
-    IP-based virtual hosts, where each vhost is dedicated to a site that makes use of a specific IP address from the web server IP addresses
+- Hosts virtuales basados en IP, donde cada `vhost` está dedicado a 
+un sitio que hace uso de una dirección IP específica de las direcciones 
+IP del servidor web.
 
-    Port-based virtual hosts, where each vhost listens on a different port number for each site it hosts
+- Hosts virtuales basados en puertos, donde cada vhost escucha en un 
+- número de puerto diferente para cada sitio que aloja
 
-    Name-based virtual hosts, where each vhost is dedicated to a site with a specific domain name
+- Hosts virtuales basados en nombre, donde cada `vhost` está dedicado 
+a un sitio con un nombre de dominio específico
 
-An Apache configuration can mix all these categories and also include a default host.
+Una configuración de Apache puede mezclar todas estas categorías y 
+también incluir un host predeterminado.
 
-The initial Apache configuration file is called 000-default.conf and is found in the /etc/apache2/sites-available directory. Apache requires a new configuration file to have a .conf file extension. At the Linux terminal, change the working directory to sites-available, which is the Apache directory that contains the configuration files.
+El archivo de configuración inicial de Apache se llama `000-default.conf`
+ y se encuentra en el directorio `/etc/apache2/sites-available`. Apache 
+requiere un nuevo archivo de configuración para tener una extensión de 
+archivo `.conf`. En la terminal de Linux, cambie el directorio de 
+trabajo a `sites-available`, que es el directorio de Apache que 
+contiene los archivos de configuración.
+
+```
 $ cd /etc/apache2/sites-available
+```
 
-Open the default configuration file 000-default.conf with the command cat , as shown here:
+Abra el archivo de configuración predeterminado `000-default.conf` con 
+el comando `cat`, como se muestra aquí:
+
+```
 $ cat 000-default.conf
+```
 
-The file opens in a new window. The file contents are as follows:
+El archivo se abre en una nueva ventana. El contenido del archivo 
+es el siguiente:
+
+```
 <VirtualHost *:80>
       # The ServerName directive sets the request scheme, hostname and port that
       # the server uses to identify itself. This is used when creating
@@ -648,6 +670,8 @@ The file opens in a new window. The file contents are as follows:
       # after it has been globally disabled with "a2disconf".
       #Include conf-available/serve-cgi-bin.conf
 </VirtualHost>
+```
+
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noet
 
 Each Apache configuration file includes three kinds of entries.
