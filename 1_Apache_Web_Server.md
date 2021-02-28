@@ -833,7 +833,8 @@ utilizarla como índice de directorio para el segundo `vhost`. Utilice
 ```
 
 Abra dos pestañas en su navegador. En el primero, ingrese la 
-siguiente dirección en la barra de direcciones:Abra dos pestañas en su navegador. En el primero, ingrese la 
+siguiente dirección en la barra de direcciones:Abra dos 
+pestañas en su navegador. En el primero, ingrese la 
 siguiente dirección en la barra de direcciones:
 
 ```
@@ -866,22 +867,47 @@ A continuación, verá un ejemplo similar, esta vez utilizando hosts
 virtuales basados en puertos.
 
 
-### Using Port-Based Virtual Hosts
+### Uso de hosts virtuales basados en puertos
 
-The configuration used next will create two virtual hosts that listen on different ports, for instance port 8080 and port 8181. When anything other than the default port number for the HTTP protocol, port 80, is used, the port is required to be appended to the URL with a colon (:). Here’s an instance:
+La configuración utilizada a continuación creará dos hosts virtuales 
+que escuchan en diferentes puertos, por ejemplo, el puerto 8080 y el 
+puerto 8181. Cuando se usa cualquier otro número de puerto que no sea 
+el predeterminado para el protocolo HTTP, el puerto 80, es necesario 
+agregar el puerto a la URL con dos puntos (`:`). Aquí hay una instancia:
+
+```
 192.168.1.100:8080
+```
 
-Using a different port than the default one makes the URL a bit more complicated, but that is not really a problem when you implement a DDNS service (see Chapter  4) that hides this complexity from the user.
+El uso de un puerto diferente al predeterminado hace que la URL sea un 
+poco más complicada, pero eso no es realmente un problema cuando se 
+implementa un servicio DDNS (ver Capítulo 4) que oculta esta complejidad 
+al usuario.
 
-In the sites-available directory, create a new configuration file.
+En el directorio de sitios disponibles, cree un nuevo archivo de 
+configuración.
+
+```
 $ cd /etc/apache2/sites-available
 $ sudo gedit example2.conf
+```
+En el archivo `example2.conf`, ingrese las siguientes directivas para 
+indicar al servidor que incluya los números de puerto 8080 y 8181 en la 
+lista de puertos de escucha:
 
-In the file example2.conf, enter the following directives to direct the server to include port numbers 8080 and 8181 in the list of the listening ports:
+```
 Listen 8080
 Listen 8181
+```
 
-To create a vhost that listens on port 8080 on any IP address of the server, you can use the asterisk notation in the VirtualHost container as <VirtualHost *:8080>. Similarly, for the vhost that listens on port 8181, also on any IP address of the server, use the <VirtualHost *:8181> container. The complete listing of example2.conf is as follows:
+Para crear un `vhost` que escuche en el puerto 8080 en cualquier 
+dirección IP del servidor, puede usar la notación de asterisco en el 
+contenedor `VirtualHost` como `<VirtualHost *:8080>`. De manera similar, 
+para el `vhost` que escucha en el puerto 8181, también en cualquier 
+dirección IP del servidor, use el contenedor `<VirtualHost *:8181>`. 
+La lista completa de `example2.conf` es la siguiente:
+
+```
 Listen 8080
 Listen 8181
 # 1st vhost
@@ -900,28 +926,58 @@ Listen 8181
       ErrorLog ${APACHE_LOG_DIR}/error.log
       CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
+```
 
-Save the new configuration file and enable it using the a2ensite command . Type the following:
+Guarde el nuevo archivo de configuración y habilítelo con el comando 
+`a2ensite`. Escriba lo siguiente:
+
+```
 $ sudo a2ensite example2.conf
+```
 
-or simply type the following:
+o simplemente escriba lo siguiente:
+
+```
 $ sudo a2ensite example2
+```
 
-To enable the new Apache configuration, you also need to reload the web server.
+TPara habilitar la nueva configuración de Apache, también debe volver 
+a cargar el servidor web.
+
+```
 $ sudo service apache2 force-reload
+```
 
-Sometimes the same configuration rules apply to different sites, causing unpredictable results. If you have to work on sites with conflicting rules, then you have to disable one of the sites. To disable, for instance, example1, use the a2dissite (apache2 disable site) command, as shown here:
+A veces, las mismas reglas de configuración se aplican a diferentes 
+sitios, lo que genera resultados impredecibles. Si tiene que trabajar 
+en sitios con reglas en conflicto, debe desactivar uno de los sitios. 
+Para deshabilitar, por ejemplo, `example1`, use el comando `a2dissite`
+(apache2 disable site), como se muestra aquí:
+
+```
 $ sudo a2dissite example1
+```
+Para tener dos números de puerto nuevos que escuchará el servidor, debe 
+configurar `ufw` para permitir conexiones para esos números de puerto. 
+En la línea de comandos de Linux, escriba lo siguiente:
 
-To have two new port numbers that the server will listen to, you need to set up ufw to permit connections for those port numbers. At the Linux command line, type the following:
+```
 $ sudo ufw allow 8080
 $ sudo ufw allow 8181
+```
 
-Create at the document root the two directory indexes, index3.html and index4.html, and refer to them in the example2.conf file. These indexes are for the vhosts that listen on port 8080 and on port 8181, respectively.
+Cree en la raíz del documento los dos índices de directorio, 
+`index3.html` e `index4.html`, y consúltelos en el archivo 
+`example2.conf`. Estos índices son para los `vhosts` que escuchan en 
+el puerto 8080 y en el puerto 8181, respectivamente.
+
+```
 $ cd /var/www/html
 $ sudo gedit index3.html
-
+```
 In the gedit window that appears, enter the following HTML source code:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -960,28 +1016,37 @@ Next, in the document root directory , add the following HTML source code to ind
 <p>Hello from 8181</p>
 </body>
 </html>
-
+```
 To test the new vhosts, open two tabs in your browser. On the first tab, enter the following in the address bar:
+
+```
 127.0.0.1:8080
+```
 
 or enter the following:
+
+```
 192.168.1.100:8080
+```
 
 The directory index index3.html is displayed (Figure 1-20).
-Open image in new windowFigure 1-20
-Figure 1-20
 
-Testing the first port-based vhost
+Open image in new windowFigure 1-20
+
+Figure 1-20 Testing the first port-based vhost
 
 On the second tab, enter one of the following in the address bar:
+
+```
 127.0.0.1:8181
 192.168.1.100:8181
+```
 
 The directory index index4.html is displayed (Figure 1-21).
-Open image in new windowFigure 1-21
-Figure 1-21
 
-Testing the second port-based vhost
+Open image in new windowFigure 1-21
+
+Figure 1-21 Testing the second port-based vhost
 
 In the following section, you will create another pair of vhosts that serve requests for specific domain names in the Host field of the client's HTTP request.
 
