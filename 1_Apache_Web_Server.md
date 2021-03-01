@@ -1054,28 +1054,60 @@ solicitudes de nombres de dominio específicos en el campo `Host` de
 la solicitud HTTP del cliente.
 
 
-### Using Name-Based Virtual Hosts
-The third approach for running multiple sites is to use name-based vhosts, where each vhost responds to the client’s request if the client provides a host HTTP header value that matches its ServerName directive . You will not use the Domain Name System for your web server until Chapter  4, so for now you can only try the name-based virtual hosts locally, from the same computer as the server. To provide names to your computer, edit the /etc/hosts file as indicated in Figure 1-22. Use the following command at the terminal:
+### Uso de hosts virtuales basados en nombres
+
+El tercer enfoque para ejecutar varios sitios es utilizar `vhosts` 
+basados en nombres, donde cada `vhost` responde a la solicitud del 
+cliente si el cliente proporciona un valor de encabezado HTTP de host 
+que coincida con su directiva `ServerName`. No utilizará el Sistema de 
+nombres de dominio para su servidor web hasta el Capítulo 4, por lo que 
+por ahora solo puede probar los hosts virtuales basados en nombres 
+localmente, desde la misma computadora que el servidor. Para 
+proporcionar nombres a su computadora, edite el archivo `/etc/hosts` c
+omo se indica en la Figura 1-22. Utilice el siguiente comando en la 
+terminal:
+
+```
 $ sudo gedit /etc/hosts
-Open image in new windowFigure 1-22
-Figure 1-22
+```
 
-Adding two more host names to /etc/hosts
+Abrir imagen en una ventana nueva Figura 1-22
 
-As you can see, you have already used one entry from this file, localhost , which corresponds to IP address 127.0.0.1. Enter two more entries in /etc/hosts, both resolving to the web server’s static private IP address.
+Figura 1-22 Agregar dos nombres de host más a `/etc/hosts`
+
+Como puede ver, ya ha utilizado una entrada de este archivo, `localhost`, 
+que corresponde a la dirección IP 127.0.0.1. Ingrese dos entradas más en 
+`/etc/hosts`, ambas resueltas en la dirección IP privada estática del 
+servidor web.
+
+```
 192.168.1.100      webserver.com
 192.168.1.100      myserver.com
+```
 
-Save the /etc/hosts file and try one of those names, for instance webserver.com, in your browser’s address bar. The domain name resolves to the IP address 192.168.1.100, and with sites of the example1 configuration disabled, the vhost that dispatches this request is the default one, 000-default.conf . The web page downloaded is therefore the one indicated in Figure 1-23.
-Open image in new windowFigure 1-23
-Figure 1-23
+Guarde el archivo `/etc/hosts` y pruebe uno de esos nombres, por 
+ejemplo `webserver.com`, en la barra de direcciones de su navegador. 
+El nombre de dominio se resuelve en la dirección IP 192.168.1.100, y 
+con los sitios de la configuración `example1` deshabilitados, el `vhost` 
+que envía esta solicitud es el predeterminado, `000-default.conf`. La 
+página web descargada es, por tanto, la indicada en la Figura 1-23.
 
-With no name-based vhost configured so far, the default vhost serves the webserver.com request
+Abrir imagen en una ventana nueva Figura 1-23
 
-Create two name-based vhosts, each one responsible for one of the previous names. Use gedit to create the configuration file of the two vhosts.
+Figura 1-23 Sin ningún `vhost` basado en nombre configurado hasta ahora, 
+el `vhost` predeterminado atiende la solicitud `webserver.com`
+
+Cree dos `vhosts` basados en nombres, cada uno responsable de uno de los 
+nombres anteriores. Utilice gedit para crear el archivo de configuración 
+de los dos `vhost`s.
+
+```
 $ sudo gedit example3.conf
+```
 
-In example3.conf, enter the following directives:
+En `example3.conf`, ingrese las siguientes directivas:
+
+```
 <VirtualHost *:80>
     ServerName webserver.com
     DocumentRoot "/var/www/html/test1"
@@ -1084,14 +1116,28 @@ In example3.conf, enter the following directives:
     ServerName myserver.com
     DocumentRoot "/var/www/html/test2"
 </VirtualHost>
+```
+El primer `vhost` escucha el puerto HTTP predeterminado, que es el 
+puerto 80. Se activa cuando recibe una solicitud HTTP con el valor del 
+encabezado del host establecido en `webserver.com`. El segundo `vhost` 
+también escucha el puerto 80. Espera las solicitudes HTTP con el valor 
+del encabezado del Host establecido en `myserver.com`.
 
-The first vhost listens to the default HTTP port, which is port 80. It is triggered when it receives an HTTP request with the value of the Host header set to webserver.com. The second vhost also listens to port 80. It waits for HTTP requests with the value of the Host header set to myserver.com.
+Los dos sitios usan dos raíces de documentos diferentes, 
+`/var/www/html/test1` y `/var/www/html/test2`, y dado que no se definen 
+índices de directorio con la directiva `DirectoryIndex`, el predeterminado 
+para Apache, `index.html`, lo hará ser usado. A continuación, cree un 
+archivo llamado `index.html` en la raíz de cada directorio. En la 
+terminal de Linux, ingrese lo siguiente:
 
-The two sites use two different document roots, /var/www/html/test1 and /var/www/html/test2, and since no directory indexes are defined with the DirectoryIndex directive, the default one for Apache, index.html, will be used. Create next a file named index.html in each directory root. At the Linux terminal, enter the following:
+```
 $ cd /var/www/html/test1
 $ sudo gedit index.html
+```
+En la ventana de gedit, inserte el siguiente código HTML y guarde 
+el archivo:
 
-In the gedit window, insert the following HTML code and save the file:
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1110,12 +1156,22 @@ In the gedit window, insert the following HTML code and save the file:
 <p>Hello from webserver.com</p>
 </body>
 </html>
+```
 
-Create a file called index.html in the second document root. At the Linux terminal, enter the following:
+Cree un archivo llamado `index.html` en la segunda raíz del documento. En 
+la terminal de Linux, ingrese lo siguiente: Cree un archivo llamado 
+`index.html` en la segunda raíz del documento. En la terminal de Linux, 
+ingrese lo siguiente:
+
+```
 $ cd /var/www/html/test2
 $ sudo gedit index.html
+```
 
-In the gedit window, enter the following source code and save the file:
+En la ventana de gedit, ingrese el siguiente código fuente y guarde el 
+archivo:
+
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -1134,85 +1190,154 @@ In the gedit window, enter the following source code and save the file:
 <p>Hello from myserver.com</p>
 </body>
 </html>
+```
 
-Enable the new configuration using the following:
+Habilite la nueva configuración usando lo siguiente:
+
+```
 $ sudo a2ensite example3
+```
 
-You also have to reload the web server to enable the new sites.
+También debe volver a cargar el servidor web para habilitar los 
+nuevos sitios.
+
+```
 $ sudo service apache2 force-reload
+```
 
-In a browser on the computer that hosts the web server, open two tabs. In the first tab, enter the following in the address bar:
+En un navegador de la computadora que aloja el servidor web, abra dos 
+pestañas. En la primera pestaña, ingrese lo siguiente en la barra de 
+direcciones:
+
+```
 webserver.com
+```
 
-The web page index.html, located in /var/www/html/test1, is displayed in the browser’s window, as displayed in Figure 1-24.
-Open image in new windowFigure 1-24
-Figure 1-24
+La página web `index.html`, ubicada en `/var/www/html/test1`, se 
+muestra en la ventana del navegador, como se muestra en la Figura 1-24.
 
-Testing the first name-based vhost
+Abrir imagen en una ventana nueva Figura 1-24
 
-Use the following URL on the second tab:
+Figura 1-24 Prueba del primer vhost basado en nombre
+
+Utilice la siguiente URL en la segunda pestaña:
+
+```
 myserver.com
+```
 
-The web page index.html, located in document root /var/www/html/test1, is displayed in the browser’s window, as viewed in Figure 1-25.
-Open image in new windowFigure 1-25
-Figure 1-25
+La página web `index.html`, ubicada en el documento root 
+`/var/www/html/test1`, se muestra en la ventana del navegador, como se 
+ve en la Figura 1-25.
 
-Testing the second name-based vhost
+Abrir imagen en una ventana nueva Figura 1-25
 
-In Chapter  9 you’ll test the ServerName directive with a globally valid domain name like httpsserver.eu and see how to obtain and apply such a domain name.
+Figura 1-25 Prueba del segundo vhost basado en el nombre
+
+En el Capítulo 9, probará la directiva `ServerName` con un nombre de 
+dominio globalmente válido como `httpsserver.eu` y verá cómo obtener y 
+aplicar dicho nombre de dominio.
 
 
-### Inspecting the Overall Virtual Host Configuration
+### Inspección de la configuración general del host virtual
 
-Each configuration enabled with the a2ensite command adds a symbolic link of itself to the directory /etc/apache2/sites-enabled. Use the following:
+Cada configuración habilitada con el comando `a2ensite` agrega un enlace 
+simbólico de sí mismo al directorio `/etc/apache2/sites-enabled`. Utilice 
+lo siguiente:
+
+```
 $ ls /etc/apache2/sites-enabled
+```
 
-As displayed in Figure 1-26, the ls command lists three configuration files: 000-default.conf, example2.conf, and example3.conf. The configuration example1.conf is not included in this directory because it was disabled with the a2dissite command. Use the following to view the details of the overall configuration:
+Como se muestra en la Figura 1-26, el comando `ls` enumera tres archivos 
+de configuración: `000-default.conf`, `example2.conf` y `example3.conf`. 
+La configuración `example1.conf` no está incluida en este directorio 
+porque fue deshabilitada con el comando `a2dissite`. Utilice lo siguiente 
+para ver los detalles de la configuración general:
+
+```
 $ sudo apachectl -S
-Open image in new windowFigure 1-26
-Figure 1-26
+```
 
-Listing the enabled sites and details of the Apache configuration
+Abrir imagen en una ventana nueva Figura 1-26
 
-Figure 1-26 displays also the output of the apachectl -S command, which provides an overview of the vhost configuration.
+Figura 1-26 Listado de los sitios habilitados y detalles de la 
+configuración de Apache
+
+La Figura 1-26 muestra también la salida del comando `apachectl -S`, 
+que proporciona una descripción general de la configuración de `vhost`.
 
  
- ## Reading Apache Log Files
+ ## Lectura de archivos de registro de Apache
 
-To get an idea of the number of visitors and see some of the connection details, such as the client IP address and the time, you can read the log files of Apache. For the vhosts examples of this chapter, the directives related to log files are used in the configuration files as follows:
+Para tener una idea del número de visitantes y ver algunos de los 
+detalles de la conexión, como la dirección IP del cliente y la hora, 
+puede leer los archivos de registro de Apache. Para los ejemplos de 
+`vhosts` de este capítulo, las directivas relacionadas con los archivos 
+de registro se utilizan en los archivos de configuración de la 
+siguiente manera:
+
+```
 ErrorLog ${APACHE_LOG_DIR}/error.log
 CustomLog ${APACHE_LOG_DIR}/access.log combined
+```
 
-To locate APACHE_LOG_DIR, use the following at the Linux terminal:
+Para ubicar `APACHE_LOG_DIR`, use lo siguiente en la terminal de 
+Linux:
+
+```
 $ grep APACHE_LOG_DIR /etc/apache2/envvars
+```
 
-The Linux terminal responds with the following output:
+El terminal de Linux responde con el siguiente resultado:
+
+```
 export APACHE_LOG_DIR=/var/log/apache2$SUFFIX
+```
 
-With an empty value assigned for the variable $SUFFIX in the file envvars, the Apache log directory resolves to /var/log/apache2.
+Con un valor vacío asignado para la variable `$SUFFIX` en el archivo 
+`envvars`, el directorio de registro de Apache se resuelve en 
+`/var/log/apache2`.
 
-Change the working directory to /var/log/apache2, where the file access.log is used to list the visitor details and the file error.log is used to report any errors.
+Cambie el directorio de trabajo a `/var/log/apache2`, donde el archivo 
+`access.log` se usa para listar los detalles del visitante y el archivo 
+`error.log` se usa para informar cualquier error.
+
+```
 $ cd /var/log/apache2
+```
 
-Move to another computer of your LAN and make an HTTP request to the Apache server. For instance, at the browser’s address bar, type the following:
+Muévase a otra computadora de su LAN y realice una solicitud HTTP al 
+servidor Apache. Por ejemplo, en la barra de direcciones del navegador, 
+escriba lo siguiente:
+
+```
 192.168.1.100
+```
 
-Read the access.log file using more, less, tail, or a similar command:
+Lea el archivo `access.log` con `more`, `less`, `tail` o un comando 
+similar:
+
+```
 $ tail –n 1 access.log
+```
 
-The previous Linux shell command prints one line from the end, which corresponds to the last record of the access log. You can also use the –f argument to continuously print the last visitor’s details of the access log:
+El comando de shell de Linux anterior imprime una línea desde el final, 
+que corresponde al último registro del registro de acceso. También 
+puede usar el argumento `–f` para imprimir continuamente los detalles 
+del último visitante del registro de acceso:
+
+```
 $ tail –fn 1 access.log
+```
+Los detalles sobre la nueva conexión se muestran a continuación, 
+incluida la dirección IP de la computadora utilizada por el cliente, 
+la fecha y hora en que se emitió la solicitud, la URL utilizada, el 
+sistema operativo y el navegador:
 
-The details about the new connection are displayed next, including the IP address of the computer used by the client, the date and time the request was issued, the URL used, the operating system, and the browser:
-192.168.1.2 - - [14/Jun/2018:16:09:23 +0300] "GET /favicon.ico HTTP/1.1" 404 504 "http://192.168.1.100/" "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36”
-
-
-
-
-
-
-
-
-
-
-
+```
+192.168.1.2 - - [14/Jun/2018:16:09:23 +0300] 
+"GET /favicon.ico HTTP/1.1" 404 504 
+"http://192.168.1.100/" 
+"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36”
+```
