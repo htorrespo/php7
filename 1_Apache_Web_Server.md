@@ -1017,38 +1017,41 @@ Next, in the document root directory , add the following HTML source code to ind
 </body>
 </html>
 ```
-To test the new vhosts, open two tabs in your browser. On the first tab, enter the following in the address bar:
+Para probar los nuevos vhosts, abra dos pestañas en su navegador. En 
+la primera pestaña, ingrese lo siguiente en la barra de direcciones:
 
 ```
 127.0.0.1:8080
 ```
 
-or enter the following:
+o ingrese lo siguiente:
 
 ```
 192.168.1.100:8080
 ```
+Se muestra el índice de directorio `index3.html` (Figura 1-20).
 
-The directory index index3.html is displayed (Figure 1-20).
+Abrir imagen en una ventana nueva Figura 1-20
 
-Open image in new windowFigure 1-20
+Figura 1-20 Prueba del primer `vhost` basado en puerto
 
-Figure 1-20 Testing the first port-based vhost
-
-On the second tab, enter one of the following in the address bar:
+En la segunda pestaña, ingrese uno de los siguientes en la barra de 
+direcciones:
 
 ```
 127.0.0.1:8181
 192.168.1.100:8181
 ```
 
-The directory index index4.html is displayed (Figure 1-21).
+Se muestra el índice de directorio `index4.html` (Figura 1-21).
 
-Open image in new windowFigure 1-21
+Abrir imagen en una ventana nueva Figura 1-21
 
-Figure 1-21 Testing the second port-based vhost
+Figura 1-21 Prueba del segundo `vhost` basado en puerto
 
-In the following section, you will create another pair of vhosts that serve requests for specific domain names in the Host field of the client's HTTP request.
+En la siguiente sección, creará otro par de `vhosts` que sirven 
+solicitudes de nombres de dominio específicos en el campo `Host` de 
+la solicitud HTTP del cliente.
 
 
 ### Using Name-Based Virtual Hosts
